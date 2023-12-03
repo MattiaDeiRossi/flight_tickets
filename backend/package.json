@@ -1,0 +1,19 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "compile": "tsc",
+    "start": "node src/index.js"
+  },
+  "keywords": [],
+  "author": "Mattia Dei Rossi <885768@stud.unive.it>",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.3.2"
+  },
+  "dependencies": {
+    "mongoose": "^8.0.2"
+  }
+}
