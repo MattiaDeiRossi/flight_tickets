@@ -7,3 +7,5 @@ const PORT = process.env.PORT
 app.listen(PORT, HOST, () => {
     console.log(`Running on http://${HOST}:${PORT}`);
 });
+
+startDB();

@@ -1,0 +1,36 @@
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2>Flight Search</h2>
+        </div>
+        <div class="card-body">
+            <form #form="ngForm" (ngSubmit)="onSubmit(form)" ngNativeValidate>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label for="departure">Departure</label>
+                        <input type="text" class="form-control" id="departure" [(ngModel)]="selectedCity"
+                            [ngModelOptions]="{standalone: true}" (input)="onCityInputChange()"
+                            placeholder="Departure City">
+                        <ul *ngIf="filteredCities.length > 0" class="list-group">
+                            <li *ngFor="let city of filteredCities" class="list-group-item" (click)="selectCity(city)">
+                                {{ city }}</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="destination">Destination</label>
+                        <input type="text" class="form-control" id="destination" placeholder="Destination City">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="departureDate">Departure Date</label>
+                        <input type="date" class="form-control" id="departureDate">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="returnDate">Return Date</label>
+                        <input type="date" class="form-control" id="returnDate">
+                    </div>
+                </div>
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Find Ticket</button>
+            </form>
+        </div>
+    </div>
+</div>

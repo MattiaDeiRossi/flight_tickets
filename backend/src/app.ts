@@ -1,6 +1,6 @@
 import * as express from "express"; 
 import { Application, Request, Response, NextFunction } from 'express';
-import { User } from './models/user';
+import { User, user } from './models/user';
 import * as passport from 'passport';
 import * as passportHTTP from 'passport-http';
 import * as cors from 'cors';
@@ -20,7 +20,7 @@ const auth = jwt.expressjwt({
 passport.use(new passportHTTP.BasicStrategy(
     function (username, password, done) {
         console.log("New login attempt from ".blue + username);
-        User.findOne({ username: username }).then(
+        user.findOne({ username: username }).then(
             (user) => {
                 if (user.validatePassword(password)) {
                     return done(null, user);
@@ -36,7 +36,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/users', auth, (req: Request, res: Response) => {
-    User.find({}, { digest: 0, salt: 0 }).then((users) => {
+    user.find({}, { digest: 0, salt: 0 }).then((users) => {
         return res.status(200).json(users);
     }).catch((reason) => {
         return res.status(404).json(reason);
@@ -44,20 +44,18 @@ app.get('/users', auth, (req: Request, res: Response) => {
 });
 
 app.post('/users', (req, res, next) => {
-    let u = new User(req.body);
-    if (!req.body.password) {
-        return res.status(404).json();
-    }
+    let u = new user(req.body);
     u.setPassword(req.body.password);
     u.save().then((data) => {
-        return res.status(200).json(u.username);
+        return res.status(201).json(u.username);
     }).catch((reason) => {
-        return res.status(404).json(reason);
+        console.log(reason.name)
+        return res.status(500).json(reason);
     })
 });
 
 app.delete('/users/:username', auth, (req, res, next) => {
-    User.deleteOne({ username: req.params.username }).then(
+    user.deleteOne({ username: req.params.username }).then(
         (data) => {
             return res.status(200).json(data.deletedCount);
         }).catch((reason) => {

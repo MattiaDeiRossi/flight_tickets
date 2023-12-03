@@ -66,4 +66,4 @@ userSchema.methods.setAdmin = function () {
 }
 
 // Create a Model.
-export const User = model<User, UserModel>('User', userSchema);
+export const user = model<User, UserModel>('User', userSchema);

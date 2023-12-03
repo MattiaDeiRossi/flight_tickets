@@ -21,7 +21,7 @@ export class SignupComponent {
         this.router.navigate(['/login']);
       },
       error: (err) => {
-        alert('Login error: ' + err.message);
+        alert('Login error: ' + err);
       }
     })
   }
