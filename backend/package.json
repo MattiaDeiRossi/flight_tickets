@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "compile": "tsc",
-    "start": "node src/index.js"
+    "start": "node dist/index.js"
   },
   "keywords": [],
   "author": "Mattia Dei Rossi <885768@stud.unive.it>",

@@ -1,9 +1,7 @@
 import { connect } from 'mongoose';
 
-const db_string = 'mongodb://mattia:pass@my_mongo:27017/my_restaurant_db';
-
 export function startDB() {
-    connect(db_string)
+    connect(process.env.MONGODB_URI)
         .then(
             () => {
                 console.log("Connection with mongodb Successfully");

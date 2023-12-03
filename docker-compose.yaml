@@ -1,5 +1,9 @@
 version: '3.9'
 
+volumes:
+  mongodbdata:
+    driver: local
+
 services:
 
   frontend:
@@ -18,7 +22,8 @@ services:
     depends_on:
       - mongodb
     environment:
-      MONGODB_URI: mongodb://root:example@mongodb:27017/flight_tickets_db
+      MONGODB_URI: mongodb://mattia:pass@mongodb:27017/flight_tickets_db
+    command: "npm start"
 
   mongodb:
     image: mongo
@@ -29,3 +34,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: flight_tickets_db
+    volumes:
+      - mongodbdata:/data/db
+      - ./mongodb/init-mongo.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
