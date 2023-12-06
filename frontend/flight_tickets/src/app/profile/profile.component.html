@@ -1,0 +1,15 @@
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2>My profile</h2>
+        </div>
+        <div class="card-body">
+            <div class="card-text">
+                <p><strong>Username:</strong> {{ user.username }}</p>
+                <p><strong>Role:</strong> {{ user.role }}</p>
+            </div>
+            <button class="btn btn-primary btn-danger"(click)="logout()">Logout</button>
+
+        </div>
+    </div>
+</div>

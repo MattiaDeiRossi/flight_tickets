@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { jwtDecode } from "jwt-decode";
-import { User } from './interfaces';
+import { ROLES, User } from './interfaces';
 
 interface TokenData {
   username: string,
@@ -15,16 +15,15 @@ interface ReceivedToken {
   token: string
 }
 
-
 @Injectable({
   providedIn: 'root'
 })
-export class HttpService {
+export class UsersService {
+
   private token: string = '';
-  public url = 'http://localhost:8080';
+  public url = 'http://localhost:8081/api/users';
 
   constructor(private http: HttpClient) {
-    console.log('Http service instantiated');
     const loadedtoken = localStorage.getItem('token');
     if (!loadedtoken || loadedtoken.length < 1) {
       console.log("No token found in local storage");
@@ -33,51 +32,6 @@ export class HttpService {
       this.token = loadedtoken as string;
       console.log("JWT loaded from local storage.")
     }
-  }
-
-  login(username: string, password: string, remember: boolean): Observable<any> {
-    console.log('Login: ' + username + ' ' + password);
-    const options = {
-      headers: new HttpHeaders({
-        authorization: 'Basic ' + btoa(username + ':' + password),
-        'cache-control': 'no-cache',
-        'Content-Type': 'application/x-www-form-urlencoded',
-      })
-    };
-
-    return this.http.get(this.url + '/login', options).pipe(
-      tap((data) => {
-        const recv = JSON.parse(JSON.stringify(data));
-        // console.log(recv);
-        if (recv.error == true)
-          alert('User does not exists');
-        this.token = (data as ReceivedToken).token;
-        if (remember) {
-          localStorage.setItem('token', this.token as string);
-        }
-      }));
-  }
-
-  logout() {
-    console.log('Logging out');
-    this.token = '';
-    localStorage.setItem('token', this.token);
-  }
-
-  register(user: User): Observable<any> {
-    const options = {
-      headers: new HttpHeaders({
-        'cache-control': 'no-cache',
-        'Content-Type': 'application/json',
-      })
-    };
-
-    return this.http.post(this.url + '/users', user, options).pipe(
-      tap((data) => {
-        console.log(JSON.stringify(data));
-      })
-    );
-
   }
 
   get_token() {
@@ -98,12 +52,7 @@ export class HttpService {
 
   is_admin(): boolean {
     const roles = (jwtDecode(this.token) as TokenData).role;
-    for (let idx = 0; idx < roles.length; ++idx) {
-      if (roles[idx] === 'ADMIN') {
-        return true;
-      }
-    }
-    return false;
+    return roles === ROLES.ADMIN;
   }
 
   get_users(): Observable<any> {

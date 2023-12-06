@@ -3,3 +3,8 @@ export interface User {
   username: string,
   role: string
 };
+
+export enum ROLES {
+  ADMIN = "boss",
+  EMPLOYEE = "employee",
+}

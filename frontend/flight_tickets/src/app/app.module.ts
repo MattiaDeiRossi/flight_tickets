@@ -11,6 +11,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { FlightSearchComponent } from './flight-search/flight-search.component';
 import { FlightListComponent } from './flight-list/flight-list.component';
+import { ProfileComponent } from './profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { FlightListComponent } from './flight-list/flight-list.component';
     DashboardComponent,
     NavbarComponent,
     FlightSearchComponent,
-    FlightListComponent
+    FlightListComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,

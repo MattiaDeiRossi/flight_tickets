@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { HttpService } from '../http.service';
 import { User } from '../interfaces';
 import { Router } from '@angular/router';
+import { UsersService } from '../users.service';
 
 @Component({
   selector: 'app-users',
@@ -12,7 +12,7 @@ export class UsersComponent {
   public users: User[] = [];
   public del_username: string = "";
 
-  constructor(private hs: HttpService, private router: Router) {
+  constructor(private hs: UsersService, private router: Router) {
     this.getUsers();
   }
 
