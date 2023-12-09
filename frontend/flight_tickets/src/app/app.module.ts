@@ -12,6 +12,7 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { FlightSearchComponent } from './flight-search/flight-search.component';
 import { FlightListComponent } from './flight-list/flight-list.component';
 import { ProfileComponent } from './profile/profile.component';
+import { PaymentsComponent } from './payments/payments.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { ProfileComponent } from './profile/profile.component';
     NavbarComponent,
     FlightSearchComponent,
     FlightListComponent,
-    ProfileComponent
+    ProfileComponent,
+    PaymentsComponent
   ],
   imports: [
     BrowserModule,

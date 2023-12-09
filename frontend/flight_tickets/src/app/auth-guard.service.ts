@@ -10,6 +10,7 @@ export class AuthGuardService {
   private protectedRoutes: { path: string, roles: string[] }[] = [
     { path: 'users', roles: ['boss'] },
     { path: 'profile', roles: ['boss','employee'] },
+    // { path: 'payments', roles: ['user'] },
 
   ];
 
@@ -17,9 +18,7 @@ export class AuthGuardService {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     const userRole = this.auth.get_role();
-    // console.log(userRole)
     const requestedRoute = route.routeConfig?.path;// Rimuovi il '/' iniziale dalla URL
-    // console.log(requestedRoute);
 
     const allowedRoles = this.protectedRoutes
       .filter(route => route.path === requestedRoute)
