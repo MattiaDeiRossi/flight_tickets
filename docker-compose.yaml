@@ -23,6 +23,8 @@ services:
       - "8081:8081"
     depends_on:
       - mongodb
+      - users_service
+      - payments_service
     environment:
       GATEWAY_HOST: 0.0.0.0
       GATEWAY_PORT: 8081
@@ -39,11 +41,23 @@ services:
       - "3001:3001"
     depends_on:
       - mongodb
-      - gateway_service
     environment:
       MONGODB_URI: mongodb://mattia:pass@mongodb:27017/flight_tickets_db
     command: "npm start"
-  
+
+  payments_service:
+    build:
+      context: ./backend/src/payments
+      dockerfile: Dockerfile
+    container_name: payments_service
+    ports:
+      - "3003:3003"
+    depends_on:
+      - stripe_cli
+    environment:
+      STRIPE_API: sk_test_4eC39HqLyjWDarjtT1zdp7dc
+    command: "npm start"
+
   mongodb:
     image: mongo
     restart: always

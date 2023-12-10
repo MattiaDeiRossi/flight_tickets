@@ -23,8 +23,6 @@ type UserModel = Model<User, {}, UserMethods>;
 export enum ROLES {
     ADMIN = "boss",
     EMPLOYEE = "employee",
-    EMPLOYEE_MANGER = "employee_manager",
-    QUALITY_MANAGER = "quality_manager"
 }
 
 const userSchema = new Schema<User, UserModel, UserMethods>({

@@ -13,8 +13,11 @@ colors.enable();
 const app = express();
 const users_service = 'http://localhost:3001';
 const flight_tickets_service = 'http://localhost:3002';
+const payments_service = 'http://localhost:3003s';
+
 const proxyA = httpProxy.createProxyServer({ target: users_service, changeOrigin: true });
 const proxyB = httpProxy.createProxyServer({ target: flight_tickets_service, changeOrigin: true });
+const proxyC = httpProxy.createProxyServer({ target: payments_service, changeOrigin: true });
 
 app.use(express.json());
 app.use(cors());
@@ -55,16 +58,15 @@ app.get('/login', passport.authenticate('basic', { session: false }), (req, res)
 })
 
 app.post('/register', (req, res) => {
-    fetch(`${users_service}/users`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(req.body),
-    }).then((response) => {
-        res.status(response.status).json(response);
-    }).catch((error) => {
-        console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
+    let u = new user(req.body);
+    u.setPassword(req.body.password);
+    u.save().then((data) => {
+        return res.status(201).json(u.username);
+    }).catch((reason) => {
+        console.log(reason.name)
+        return res.status(500).json({ reason: reason });
     })
+
 });
 
 app.get('/api/users', auth, (req, res) => {
@@ -73,6 +75,10 @@ app.get('/api/users', auth, (req, res) => {
 
 app.get('/api/tickets', auth, (req, res) => {
     proxyB.web(req, res);
+});
+
+app.get('/api/payments', auth, (req, res) => {
+    proxyC.web(req, res);
 });
 
 const HOST = process.env.GATEWAY_HOST;
