@@ -1,84 +1,16 @@
 version: '3.9'
 
-volumes:
-  mongodbdata:
-    driver: local
+include:
+  - ./backend/docker-compose.yaml
 
 services:
 
-  # frontend:
-  #   build:
-  #     context: ./frontend/flight_tickets
-  #     dockerfile: Dockerfile
-  #   container_name: frontend
-  #   ports:
-  #     - "8080:80"
-
-  gateway_service:
+  frontend:
     build:
-      context: ./backend
+      context: ./frontend/flight_tickets
       dockerfile: Dockerfile
-    container_name: gateway_service
+    container_name: frontend
     ports:
-      - "8081:8081"
+      - "8080:80"
     depends_on:
-      - mongodb
-      - users_service
-      - payments_service
-    environment:
-      GATEWAY_HOST: 0.0.0.0
-      GATEWAY_PORT: 8081
-      JWT_SECRET: my_secret
-      MONGODB_URI: mongodb://mattia:pass@mongodb:27017/flight_tickets_db
-    command: "npm start"
-
-  users_service:
-    build:
-      context: ./backend/src/users
-      dockerfile: Dockerfile
-    container_name: users_service
-    ports:
-      - "3001:3001"
-    depends_on:
-      - mongodb
-    environment:
-      MONGODB_URI: mongodb://mattia:pass@mongodb:27017/flight_tickets_db
-    command: "npm start"
-
-  payments_service:
-    build:
-      context: ./backend/src/payments
-      dockerfile: Dockerfile
-    container_name: payments_service
-    ports:
-      - "3003:3003"
-    depends_on:
-      - stripe_cli
-    environment:
-      STRIPE_API: sk_test_4eC39HqLyjWDarjtT1zdp7dc
-    command: "npm start"
-
-  mongodb:
-    image: mongo
-    restart: always
-    container_name: mongodb
-    ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-      MONGO_INITDB_DATABASE: flight_tickets_db
-    volumes:
-      - mongodbdata:/data/db
-      - ./mongodb/init-mongo.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-
-  # rabbitmq:
-  #   image: rabbitmq:3-management
-  #   restart: always
-  #   container_name: rabbitmq
-  #   ports:
-  #     - "5672:5672"
-  #     - "15672:15672"
-  #   environment:
-  #     RABBITMQ_DEFAULT_USER: user
-  #     RABBITMQ_DEFAULT_PASS: password
+      - gateway_service
