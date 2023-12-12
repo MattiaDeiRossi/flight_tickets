@@ -3,7 +3,5 @@ LABEL maintainer="Mattia Dei Rossi <885768@stud.unive.it>"
 
 WORKDIR /payments
 COPY package.json .
-RUN npm install\
-    && npm install typescript -g
+RUN npm install
 COPY . .
-RUN tsc

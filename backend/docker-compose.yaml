@@ -1,0 +1,114 @@
+version: '3.9'
+
+networks:
+  my_net:
+    name: my_net
+
+volumes:
+  mongodbdata_users:
+    driver: local
+  mongodb_flight_tickets:
+    driver: local
+
+services:
+
+  # --- api gateway ---
+  gateway_service:
+    build:
+      context: ./src/gateway
+      dockerfile: Dockerfile
+    container_name: gateway_service
+    networks:
+      - my_net
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongodb_users
+      - users_service
+      - flight_tickets_service
+      - payments_service
+    environment:
+      GATEWAY_HOST: 0.0.0.0
+      GATEWAY_PORT: 8081
+      MONGODB_URI: mongodb://mattia:pass@mongodb_users:27017/users_db
+    command: "npm start"
+
+  # --- microservices ---
+  users_service:
+    build:
+      context: ./src/microservices/users
+      dockerfile: Dockerfile
+    container_name: users_service
+    networks:
+      - my_net
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongodb_users
+    environment:
+      MONGODB_URI: mongodb://mattia:pass@mongodb_users:27017/users_db
+    command: "npm start"
+
+  flight_tickets_service:
+    build:
+      context: ./src/microservices/flight_tickets
+      dockerfile: Dockerfile
+    container_name: flight_tickets_service
+    networks:
+      - my_net
+    ports:
+      - "3002:3002"
+    depends_on:
+      - mongodb_flight_tickets
+    environment:
+      MONGODB_URI: mongodb://mattia:pass@mongodb_flight_tickets:27017/flight_tickets_db
+    command: "npm start"
+
+  payments_service:
+    build:
+      context: ./src/microservices/payments
+      dockerfile: Dockerfile
+    container_name: payments_service
+    networks:
+      - my_net
+    ports:
+      - "3003:3003"
+    environment:
+      PAYPAL_CLIENT_ID: Abk4-4w4npbmryEg2-AUZKzjPwfnJTSbOTvu9quQAlx0RWarUgMfMHmuS6gHobc-StO17vsnop4_dyOt
+      PAYPAL_CLIENT_SECRET: EKUDbyltjatYNE6I9bchUhE8CKOzQh6vHJP3BRf61z4_2jbEFVEV3-HdGUu8GsK-_4cbFafMKxBoHFYg
+    command: "npm start"
+
+  # --- DBs ---
+  mongodb_users:
+    image: mongo
+    restart: always
+    container_name: mongodb_users
+    networks:
+      - my_net
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: users_db
+    volumes:
+      - mongodbdata_users:/data/db
+      - ./src/DBs/mongodb_users/init-mongo.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+
+  mongodb_flight_tickets:
+    build:
+      context: ./src/DBs/mongodb_flight_tickets
+      dockerfile: Dockerfile
+    restart: always
+    container_name: mongodb_flight_tickets
+    networks:
+      - my_net
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: flight_tickets_db
+    volumes:
+      - mongodb_flight_tickets:/data/db
+      - ./src/DBs/mongodb_flight_tickets/init-mongo.js:/docker-entrypoint-initdb.d/mongo-init.js:ro

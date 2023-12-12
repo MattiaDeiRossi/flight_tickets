@@ -1,28 +1,30 @@
-import * as express from "express";
-import * as passport from 'passport';
-import * as passportHTTP from 'passport-http';
+import express from 'express';
+import passport from 'passport';
+import passportHTTP from 'passport-http';
 import * as jwt from 'express-jwt';
 import * as jsonwebtoken from 'jsonwebtoken';
-import * as cors from 'cors';
-import * as httpProxy from 'http-proxy';
-import * as colors from 'colors';
-import { user } from "./users/models/user";
+import cors from 'cors';
+import colors from 'colors';
+import { user } from "./models/user";
 import { startDB } from "./db";
+import { createProxyMiddleware, Filter, Options, RequestHandler } from 'http-proxy-middleware';
+
 colors.enable();
 
 const app = express();
 const users_service = 'http://localhost:3001';
 const flight_tickets_service = 'http://localhost:3002';
-const payments_service = 'http://localhost:3003s';
+const payments_service = 'http://localhost:3003';
 
-const proxyA = httpProxy.createProxyServer({ target: users_service, changeOrigin: true });
-const proxyB = httpProxy.createProxyServer({ target: flight_tickets_service, changeOrigin: true });
-const proxyC = httpProxy.createProxyServer({ target: payments_service, changeOrigin: true });
+const proxyA = createProxyMiddleware({ target: users_service, changeOrigin: true });
+const proxyB = createProxyMiddleware({ target: flight_tickets_service, changeOrigin: true });
+const proxyC = createProxyMiddleware({ target: payments_service, changeOrigin: true });
 
 app.use(express.json());
 app.use(cors());
+const secret = 'my_secret';
 const auth = jwt.expressjwt({
-    secret: process.env.JWT_SECRET,
+    secret: secret,
     algorithms: ["HS256"]
 });
 
@@ -31,19 +33,22 @@ passport.use(new passportHTTP.BasicStrategy(
         console.log("New login attempt from ".blue + username);
         user.findOne({ username: username }).then(
             (user) => {
+                if (!user) {
+                    return done(null, false, { error: "Invalid user" });
+                }
                 if (user.validatePassword(password)) {
                     return done(null, user);
-                } else {
-                    return done(null, "Invalid credentials");
+                }else{
+                    return done(null, false, { error: "Invalid password" });
                 }
             }).catch((reason) => {
-                return done(null, reason);
+                return done({ error: reason });
             })
     })
 )
 
 app.get('/', (req, res) => {
-    res.status(200).json({ api_version: "1.0" });
+    res.status(200).json({ api_gateway_version: "1.0" });
 });
 
 app.get('/login', passport.authenticate('basic', { session: false }), (req, res) => {
@@ -53,7 +58,7 @@ app.get('/login', passport.authenticate('basic', { session: false }), (req, res)
         role: req.user.role,
         id: req.user.id
     };
-    let token_signed = jsonwebtoken.sign(tokendata, process.env.JWT_SECRET, { expiresIn: '1h' });
+    let token_signed = jsonwebtoken.sign(tokendata, secret, { expiresIn: '1h' });
     return res.status(200).json({ error: false, errormessage: "", token: token_signed });
 })
 
@@ -69,17 +74,9 @@ app.post('/register', (req, res) => {
 
 });
 
-app.get('/api/users', auth, (req, res) => {
-    proxyA.web(req, res);
-});
-
-app.get('/api/tickets', auth, (req, res) => {
-    proxyB.web(req, res);
-});
-
-app.get('/api/payments', auth, (req, res) => {
-    proxyC.web(req, res);
-});
+app.use('/api/users', auth, proxyA);
+app.use('/api/tickets', auth, proxyB);
+app.use('/api/payments', auth, proxyC);
 
 const HOST = process.env.GATEWAY_HOST;
 const PORT = process.env.GATEWAY_PORT;
@@ -89,3 +86,5 @@ app.listen(PORT, HOST, () => {
 });
 
 startDB();
+
+export default app;
