@@ -1,6 +1,6 @@
-import { connect } from 'mongoose';
+import { Model, connect, model } from 'mongoose';
 
-export function startDB() {
+export function startDB(){
     if(!process.env.MONGODB_URI)
         process.env.MONGODB_URI = 'mongodb://mattia:pass@localhost:27018/flight_tickets_db'
     
