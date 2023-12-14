@@ -9,7 +9,7 @@ colors.enable();
 const app = express();
 app.use(express.json());
 const cors_option = {
-    origin: 'http://localhost:8081'
+    origin: 'http://localhost:8080'
 }
 app.use(cors(cors_option));
 
@@ -48,11 +48,11 @@ app.delete('/users/:username', (req, res) => {
         })
 })
 
-const HOST: string = '0.0.0.0';
+// const HOST: string = '0.0.0.0';
 const PORT: number = 3001;
 
-app.listen(PORT, HOST, () => {
-    console.log(`Users Service listening at http://${HOST}:${PORT}`.green);
+app.listen(PORT, () => {
+    console.log(`Users Service listening at ${PORT}`.green);
 });
 
 startDB();

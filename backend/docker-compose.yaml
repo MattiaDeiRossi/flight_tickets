@@ -19,7 +19,9 @@ services:
       dockerfile: Dockerfile
     container_name: gateway_service
     networks:
-      - my_net
+      my_net:
+        aliases:
+          - gateway
     ports:
       - "8081:8081"
     depends_on:
@@ -28,8 +30,6 @@ services:
       - flight_tickets_service
       - payments_service
     environment:
-      GATEWAY_HOST: 0.0.0.0
-      GATEWAY_PORT: 8081
       MONGODB_URI: mongodb://mattia:pass@mongodb_users:27017/users_db
     command: "npm start"
 
@@ -40,7 +40,9 @@ services:
       dockerfile: Dockerfile
     container_name: users_service
     networks:
-      - my_net
+      my_net:
+        aliases:
+          - users
     ports:
       - "3001:3001"
     depends_on:
@@ -55,7 +57,9 @@ services:
       dockerfile: Dockerfile
     container_name: flight_tickets_service
     networks:
-      - my_net
+      my_net:
+        aliases:
+          - flights
     ports:
       - "3002:3002"
     depends_on:
@@ -70,7 +74,9 @@ services:
       dockerfile: Dockerfile
     container_name: payments_service
     networks:
-      - my_net
+      my_net:
+        aliases:
+          - payments
     ports:
       - "3003:3003"
     environment:

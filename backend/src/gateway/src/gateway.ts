@@ -7,21 +7,45 @@ import cors from 'cors';
 import colors from 'colors';
 import { user } from "./models/user";
 import { startDB } from "./db";
-import { createProxyMiddleware, Filter, Options, RequestHandler } from 'http-proxy-middleware';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 colors.enable();
 
 const app = express();
-const users_service = 'http://localhost:3001';
-const flight_tickets_service = 'http://localhost:3002';
+const users_service = 'http://users:3001';
+const flight_tickets_service = 'http://flights:3002';
 const payments_service = 'http://localhost:3003';
 
-const proxyA = createProxyMiddleware({ target: users_service, changeOrigin: true });
-const proxyB = createProxyMiddleware({ target: flight_tickets_service, changeOrigin: true });
-const proxyC = createProxyMiddleware({ target: payments_service, changeOrigin: true });
+const proxyA = createProxyMiddleware({
+    target: users_service, changeOrigin: true,
+    pathRewrite: {
+        '^/api/users': '',
+    }, onProxyRes: (proxyRes, req: Request, res: Response) => {
+        console.log(`Request received for ${req.url} after path rewrite`);
+    },
+});
+const proxyB = createProxyMiddleware({
+    target: flight_tickets_service, changeOrigin: true,
+    pathRewrite: {
+        '^/api/flights': '',
+    }, onProxyRes: (proxyRes, req: Request, res: Response) => {
+        console.log(`Request received for ${req.url} after path rewrite`);
+    },
+});
+const proxyC = createProxyMiddleware({
+    target: payments_service, changeOrigin: true,
+    pathRewrite: {
+        '^/api/payments': '',
+    }, onProxyRes: (proxyRes, req: Request, res: Response) => {
+        console.log(`Request received for ${req.url} after path rewrite`);
+    },
+});
 
 app.use(express.json());
-app.use(cors());
+const cors_option = {
+    origin: 'http://localhost:8080'
+}
+app.use(cors(cors_option));
 const secret = 'my_secret';
 const auth = jwt.expressjwt({
     secret: secret,
@@ -38,7 +62,7 @@ passport.use(new passportHTTP.BasicStrategy(
                 }
                 if (user.validatePassword(password)) {
                     return done(null, user);
-                }else{
+                } else {
                     return done(null, false, { error: "Invalid password" });
                 }
             }).catch((reason) => {
@@ -74,15 +98,20 @@ app.post('/register', (req, res) => {
 
 });
 
+app.use((req, res, next) => {
+    console.log(`Request received for ${req.url}`);
+    next();
+});
+
 app.use('/api/users', auth, proxyA);
-app.use('/api/tickets', auth, proxyB);
+app.use('/api/flights', auth, proxyB);
 app.use('/api/payments', auth, proxyC);
 
-const HOST = process.env.GATEWAY_HOST;
-const PORT = process.env.GATEWAY_PORT;
+// const HOST: string = '0.0.0.0';
+const PORT: number = 8081;
 
-app.listen(PORT, HOST, () => {
-    console.log(`API Gateway listening at http://${HOST}:${PORT}`.green);
+app.listen(PORT, () => {
+    console.log(`API Gateway listening at ${PORT}`.green);
 });
 
 startDB();

@@ -6,7 +6,7 @@ colors.enable();
 const app = express();
 app.use(express.json());
 const cors_option = {
-    origin: 'http://localhost:8081'
+    origin: 'http://localhost:8080'
 }
 app.use(cors(cors_option));
 

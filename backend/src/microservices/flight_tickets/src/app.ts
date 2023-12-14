@@ -9,7 +9,7 @@ colors.enable();
 const app = express();
 app.use(express.json());
 const cors_option = {
-    origin: 'http://localhost:8081'
+    origin: 'http://localhost:8080'
 }
 app.use(cors(cors_option));
 startDB();
@@ -55,11 +55,11 @@ app.get('/flights/:departure/:arrival/:departureDate', (req: Request, res: Respo
     })
 });
 
-const HOST: string = '0.0.0.0';
+// const HOST: string = '0.0.0.0';
 const PORT: number = 3002;
 
-app.listen(PORT, HOST, () => {
-    console.log(`Flight tickets Service listening at http://${HOST}:${PORT}`.green);
+app.listen(PORT, () => {
+    console.log(`Flight tickets Service listening at ${PORT}`.green);
 });
 
 export default app;

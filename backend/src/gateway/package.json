@@ -5,15 +5,22 @@
   "main": "gateway.js",
   "scripts": {
     "compile": "tsc",
-    "start": "node dist/gateway.js"
+    "start": "node dist/gateway.js",
+    "test": "mocha --require ts-node/register 'test/**/*.ts'"
+
   },
   "keywords": [],
   "author": "Mattia Dei Rossi <885768@stud.unive.it>",
   "license": "ISC",
   "devDependencies": {
-    "@types/http-proxy": "^1.17.14",
-    "http-proxy-middleware": "^2.0.6",
-    "typescript": "^5.3.2"
+    "@types/chai": "^4.3.11",
+    "@types/mocha": "^10.0.6",
+    "chai": "^4.3.10",
+    "chai-http": "^4.4.0",
+    "mocha": "^10.2.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3",
+    "http-proxy-middleware": "^2.0.6"
   },
   "dependencies": {
     "colors": "^1.4.0",
