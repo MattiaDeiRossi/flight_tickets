@@ -28,7 +28,7 @@ interface Flight {
   codeshared: string | null;
 }
 
-interface FlightDocument extends Document {
+export interface FlightDocument extends Document {
   _id: string;
   flight_date: string;
   flight_status: string | null;
@@ -38,6 +38,7 @@ interface FlightDocument extends Document {
   flight: Flight;
   aircraft: string | null;
   live: string | null;
+  price: number
 }
 
 const FlightSchema = new Schema<FlightDocument>({
@@ -86,6 +87,7 @@ const FlightSchema = new Schema<FlightDocument>({
   },
   aircraft: String,
   live: String,
+  price: Number
 });
 
 const FlightModel = model<FlightDocument>('Flight', FlightSchema);

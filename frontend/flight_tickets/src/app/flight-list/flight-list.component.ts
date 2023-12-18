@@ -24,7 +24,6 @@ export interface UserTimeout {
 })
 export class FlightListComponent {
   flights: FlightDocument[] = [];
-  costs: number[] = [];
   timers: { [username: string]: UserTimeout[] } = {};
   search: SearchForm = {
     departure: '',
@@ -40,12 +39,20 @@ export class FlightListComponent {
           next: (flights_sold: FlightUserPayment[]) => {
             this.filterFlights(flights, flights_sold);
             this.cities = Array.from(new Set([...this.flights.map(flight => flight.departure.airport), ...this.flights.map(flight => flight.arrival.airport)]));
-            this.cities.sort()
+            this.cities.sort();
 
+            this.flights.forEach((f : FlightDocument)=>{
+              f.price = Math.random() * 150;
+            })
 
-            for (let i = 0; i < this.flights.length; i++) {
-              this.costs.push(Math.random() * 150);
-            }
+            this.fs.update_flights(this.flights).subscribe({
+              next: (n)=>{
+
+              },
+              error: (e) => {
+                console.log(e)
+              }
+            })
           },
           error: (e) => {
             console.log(e)

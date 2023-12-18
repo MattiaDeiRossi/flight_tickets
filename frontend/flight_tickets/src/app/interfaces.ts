@@ -42,7 +42,9 @@ export interface FlightDocument{
   flight: Flight;
   aircraft: string | null;
   live: string | null;
+  price: number
 }
+
 
 
 export enum ROLES {

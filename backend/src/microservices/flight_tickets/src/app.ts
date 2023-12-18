@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import cors from 'cors';
 import colors from 'colors';
 import { startDB } from './db';
-import FlightModel from './models/flights';
+import FlightModel, { FlightDocument } from './models/flights';
 colors.enable();
 
 const app = express();
@@ -23,6 +23,31 @@ app.get('/flights', (req: Request, res: Response) => {
         return res.status(404).json({ error: reason });
     })
 });
+
+app.put('/flights', async (req: Request, res: Response) => {
+    try {
+        const flightUpdates = req.body.map((element: FlightDocument) => ({
+            filter: { id: element.id },
+            update: { $set: { price: element.price } }
+        }));
+
+        const updateOperations = flightUpdates.map(update => ({
+            updateMany: {
+                filter: update.filter,
+                update: update.update
+            }
+        }));
+
+        await FlightModel.bulkWrite(updateOperations);
+
+        res.status(200).json({ message: 'Update completed successfully' });
+    } catch (error) {
+        console.error('Error during update:', error);
+        res.status(500).json({ error: 'Error during flight updates' });
+    }
+});
+
+
 
 app.get('/flights/:departure/:arrival', (req, res) => {
     const { departure, arrival } = req.params;

@@ -23,7 +23,6 @@ app.get('/payments', (req: Request, res: Response) => {
 });
 
 app.post('/payments', (req, res) => {
-  console.log(req.body)
   let f = new FlightUserPaymentModel(req.body);
   f.setPaid(true);
   f.save().then(() => {
