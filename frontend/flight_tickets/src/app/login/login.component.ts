@@ -19,7 +19,7 @@ export class LoginComponent {
       next: (d) => {
         console.log('Login granted: ' + f.value.username);
         // console.log('User service token: ' + this.auth.get_token());
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/flightslist']);
         
       },
       error: (err) => {

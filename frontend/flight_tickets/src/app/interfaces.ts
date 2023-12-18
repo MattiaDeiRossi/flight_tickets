@@ -49,3 +49,9 @@ export enum ROLES {
   ADMIN = "boss",
   EMPLOYEE = "employee",
 }
+
+export interface FlightUserPayment {
+  userId: string;
+  flightId: string;
+  isPaid: boolean;
+}

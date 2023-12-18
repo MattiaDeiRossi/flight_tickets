@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { AuthService } from './auth.service';
+import { FlightUserPayment } from './interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -12,17 +13,47 @@ export class PaymentsService {
   constructor(private http: HttpClient, private auth: AuthService) {
   }
 
-  createOrder(cart: any): Observable<any> {
-    return this.http.post<any>(`${this.url}/orders`, { cart }).pipe(
+
+  get_payment(flightId: string): Observable<any> {
+    const options = {
+      headers: new HttpHeaders({
+        authorization: 'Bearer ' + this.auth.get_token(),
+        'cache-control': 'no-cache',
+        'Content-Type': 'application/json',
+      })
+    };
+    return this.http.get(this.url + '/payments/' + flightId, options).pipe(
       tap((data) => {
         return JSON.parse(JSON.stringify(data));
-      }));;
+      }));
   }
 
-  captureOrder(orderId: string): Observable<any> {
-    return this.http.post<any>(`${this.url}/orders/${orderId}/capture`, {}).pipe(
+  get_payments(): Observable<any> {
+    const options = {
+      headers: new HttpHeaders({
+        authorization: 'Bearer ' + this.auth.get_token(),
+        'cache-control': 'no-cache',
+        'Content-Type': 'application/json',
+      })
+    };
+    return this.http.get(this.url + '/payments', options).pipe(
       tap((data) => {
         return JSON.parse(JSON.stringify(data));
-      }));;
+      }));
+  }
+
+
+  post_payment(payment: FlightUserPayment): Observable<any> {
+    const options = {
+      headers: new HttpHeaders({
+        authorization: 'Bearer ' + this.auth.get_token(),
+        'cache-control': 'no-cache',
+        'Content-Type': 'application/json',
+      })
+    };
+    return this.http.post(this.url + '/payments', payment, options).pipe(
+      tap((data) => {
+        return JSON.parse(JSON.stringify(data));
+      }));
   }
 }

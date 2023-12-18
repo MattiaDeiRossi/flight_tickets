@@ -1,4 +1,33 @@
 <div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2>Flight Search</h2>
+        </div>
+        <div class="card-body">
+            <form class="form" #form="ngForm" (ngSubmit)="onSubmit(form)" ngNativeValidate>
+
+                <label for="departure">Departure</label>
+                <select name="departure" required id="departure" [(ngModel)]="search.departure" class="form-control">
+                    <option *ngFor="let city of cities" class="list-group-item">
+                        {{ city }}</option>
+                </select>
+
+                <label for="arrival">Arrival</label>
+                <select name="arrival" required id="arrival" [(ngModel)]="search.arrival" class="form-control">
+                    <option *ngFor="let city of cities" class="list-group-item">
+                        {{ city }}</option>
+                </select>
+
+                <label for="departureDate">Departure Date </label>
+                <input name="departureDate" type="date" class="form-control" id="departureDate" [(ngModel)]="search.departure_date">
+                <p></p>
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Find Ticket</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4">
     <h2>Flight List</h2>
     <div class="list-group">
         <div *ngFor="let flight of flights; let i = index" class="list-group-item">

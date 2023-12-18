@@ -7,9 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { LoginComponent } from './login/login.component';
 import { HttpClientModule } from '@angular/common/http';
 import { SignupComponent } from './signup/signup.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
 import { NavbarComponent } from './navbar/navbar.component';
-import { FlightSearchComponent } from './flight-search/flight-search.component';
 import { FlightListComponent } from './flight-list/flight-list.component';
 import { ProfileComponent } from './profile/profile.component';
 import { PaymentsComponent } from './payments/payments.component';
@@ -19,9 +17,7 @@ import { PaymentsComponent } from './payments/payments.component';
     AppComponent,
     LoginComponent,
     SignupComponent,
-    DashboardComponent,
     NavbarComponent,
-    FlightSearchComponent,
     FlightListComponent,
     ProfileComponent,
     PaymentsComponent
