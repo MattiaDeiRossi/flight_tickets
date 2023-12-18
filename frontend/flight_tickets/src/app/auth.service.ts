@@ -33,7 +33,7 @@ export class AuthService {
     }
   }
 
-  login(username: string, password: string, remember: boolean): Observable<any> {
+  login(username: string, password: string): Observable<any> {
     console.log('Login: ' + username + ' ' + password);
     const options = {
       headers: new HttpHeaders({
@@ -49,16 +49,13 @@ export class AuthService {
         if (recv.error == true)
           alert('User does not exists');
         this.token = (data as ReceivedToken).token;
-        if (remember) {
-          localStorage.setItem('token', this.token as string);
-        }
+        localStorage.setItem('token', this.token as string);
       }));
   }
 
   logout() {
     console.log('Logging out');
-    this.token = '';
-    localStorage.setItem('token', this.token);
+    localStorage.removeItem('token')
   }
 
   is_logged(): boolean {

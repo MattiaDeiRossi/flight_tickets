@@ -10,7 +10,7 @@ export class AuthGuardService {
   private protectedRoutes: { path: string, roles: string[] }[] = [
     { path: 'users', roles: ['boss'] },
     { path: 'profile', roles: ['boss','employee'] },
-    // { path: 'payments', roles: ['user'] },
+    { path: 'payments', roles: ['boss', 'employee'] },
 
   ];
 

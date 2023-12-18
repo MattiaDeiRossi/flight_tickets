@@ -15,10 +15,10 @@ export class LoginComponent {
   constructor(private auth: AuthService, private router: Router) { }
 
   onSubmit(f: NgForm) {
-    this.auth.login(f.value.username, f.value.password, f.value.checkr).subscribe({
+    this.auth.login(f.value.username, f.value.password).subscribe({
       next: (d) => {
         console.log('Login granted: ' + f.value.username);
-        // console.log('User service token: ' + this.http.get_token());
+        // console.log('User service token: ' + this.auth.get_token());
         this.router.navigate(['/dashboard']);
         
       },

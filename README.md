@@ -2,7 +2,7 @@
 
 ## How to run 
 ```bash
-docker compose up --no-attach mongodb_users --no-attach mongodb_flight_tickets
+docker compose up --no-attach mongodb_users --no-attach mongodb_flight_tickets --no-attach frontend
 ```
 
 ## How to run tests

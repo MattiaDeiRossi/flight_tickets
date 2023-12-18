@@ -1,4 +1,13 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { FlightDocument, User } from '../interfaces';
+import { FlightsService } from '../flights.service';
+import { AuthService } from '../auth.service';
+
+export interface UserTimeout {
+  flightId: number;
+  duration: number;
+}
 
 @Component({
   selector: 'app-flight-list',
@@ -6,32 +15,61 @@ import { Component } from '@angular/core';
   styleUrls: ['./flight-list.component.css']
 })
 export class FlightListComponent {
-purchaseTicket(_t6: any) {
-throw new Error('Method not implemented.');
-}
-  flights: any = [];
-  loadMoreCount = 10;
+  flights: FlightDocument[] = [];
+  costs: number[] = [];
+  timers: { [username: string]: UserTimeout[] } = {};
 
-  constructor() {
-    this.loadFlights();
+  constructor(private fs: FlightsService, private router: Router, private auth: AuthService) {
+    this.fs.get_flights().subscribe({
+      next: (n) => {
+        this.flights = n;
+
+        for (let i = 0; i < this.flights.length; i++) {
+          this.costs.push(Math.random() * 150);
+        }
+      },
+      error: (e) => {
+        console.log(e);
+      }
+    })
   }
 
-  loadFlights() {
-    for (let i = 0; i < this.loadMoreCount; i++) {
-      const flight = {
-        departure: 'City' + (i + 1),
-        destination: 'City' + (i + 2),
-        departureDate: new Date().toDateString(),
-        arrivalDate: new Date(new Date().getTime() + 86400000).toDateString(), // Adding 1 day (86400000 milliseconds)
-        cost: Math.floor(Math.random() * 500) + 100 // Random cost between 100 and 600
+  purchaseTicket(_t6: any) {
+    if(this.addUserTimer(this.auth.get_username(), 0 ))
+      this.router.navigate(['/payments'])
+  }
+
+  addUserTimer(username: string, flightId: number, duration: number=2000): boolean {
+    const isFlightIdPresent = this.isFlightIdPresent(flightId);
+
+    if (!isFlightIdPresent) {
+      if (!this.timers[username]) {
+        this.timers[username] = [];
+      }
+
+      const userTimer: UserTimeout = {
+        flightId: flightId,
+        duration: duration,
       };
-      this.flights.push(flight);
+
+      this.timers[username].push(userTimer);
+
+      setTimeout(() => {
+
+      }, duration);
+      return true;
+    } else {
+      return false;
     }
   }
 
-  onScroll(event: any) {
-    if (event.target.scrollTop + event.target.clientHeight >= event.target.scrollHeight) {
-      this.loadFlights();
+  isFlightIdPresent(flightId: number): boolean {
+    for (const username of Object.keys(this.timers)) {
+      const userTimers = this.timers[username];
+      if (userTimers.some(timer => timer.flightId === flightId)) {
+        return true;
+      }
     }
+    return false;
   }
 }

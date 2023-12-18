@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { FlightDocument } from '../interfaces';
 
 @Component({
   selector: 'app-flight-search',
@@ -7,6 +8,7 @@ import { NgForm } from '@angular/forms';
   styleUrl: './flight-search.component.css'
 })
 export class FlightSearchComponent {
+  flights : FlightDocument[] = [];
   filteredCities: string[] = [];
   selectedCity: string = "";
   allowedCities: string[] = ["City1", "City2"];

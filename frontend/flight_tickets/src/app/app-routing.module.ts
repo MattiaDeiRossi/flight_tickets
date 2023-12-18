@@ -17,7 +17,7 @@ const routes: Routes = [
   { path: 'users', title: 'Users', component: UsersComponent, canActivate: [AuthGuardService] },
   { path: 'dashboard', title: 'Dashboard', component: DashboardComponent },
   { path: 'flightsearch', title: 'Flight Search', component: FlightSearchComponent },
-  { path: 'payments', title: 'Payments', component: PaymentsComponent },
+  { path: 'payments', title: 'Payments', component: PaymentsComponent, canActivate: [AuthGuardService] },
 ];
 
 @NgModule({
