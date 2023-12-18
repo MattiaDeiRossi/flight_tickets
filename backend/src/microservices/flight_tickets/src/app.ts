@@ -9,7 +9,9 @@ colors.enable();
 const app = express();
 app.use(express.json());
 const cors_option = {
-    origin: 'http://localhost:8080'
+    origin: 'http://localhost:4200',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+
 }
 app.use(cors(cors_option));
 startDB();

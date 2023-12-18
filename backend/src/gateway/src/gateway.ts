@@ -14,36 +14,38 @@ colors.enable();
 const app = express();
 const users_service = 'http://users:3001';
 const flight_tickets_service = 'http://flights:3002';
-const payments_service = 'http://localhost:3003';
+const payments_service = 'http://payments:3003';
 
 const proxyA = createProxyMiddleware({
     target: users_service, changeOrigin: true,
     pathRewrite: {
         '^/api/users': '',
-    }, onProxyRes: (proxyRes, req: Request, res: Response) => {
-        console.log(`Request received for ${req.url} after path rewrite`);
-    },
+    }
 });
 const proxyB = createProxyMiddleware({
     target: flight_tickets_service, changeOrigin: true,
     pathRewrite: {
         '^/api/flights': '',
-    }, onProxyRes: (proxyRes, req: Request, res: Response) => {
-        console.log(`Request received for ${req.url} after path rewrite`);
-    },
+    }
 });
 const proxyC = createProxyMiddleware({
     target: payments_service, changeOrigin: true,
     pathRewrite: {
         '^/api/payments': '',
-    }, onProxyRes: (proxyRes, req: Request, res: Response) => {
-        console.log(`Request received for ${req.url} after path rewrite`);
+    }, onProxyReq: (proxyRes, req: Request, res: Response) => {
+        console.log(`onProxyReq: Request received for ${req.url} after path rewrite`);
+
     },
+     onProxyRes: (proxyRes, req: Request, res: Response) => {
+        console.log(`onProxyRes: Request received for ${res.url} after path rewrite`);
+    },
+    logLevel: 'debug',
 });
 
 app.use(express.json());
 const cors_option = {
-    origin: 'http://localhost:8080'
+    origin: 'http://localhost:4200',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
 }
 app.use(cors(cors_option));
 const secret = 'my_secret';
@@ -98,10 +100,6 @@ app.post('/register', (req, res) => {
 
 });
 
-app.use((req, res, next) => {
-    console.log(`Request received for ${req.url}`);
-    next();
-});
 
 app.use('/api/users', auth, proxyA);
 app.use('/api/flights', auth, proxyB);

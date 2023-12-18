@@ -11,6 +11,7 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { FlightListComponent } from './flight-list/flight-list.component';
 import { ProfileComponent } from './profile/profile.component';
 import { PaymentsComponent } from './payments/payments.component';
+import { MyFlightsComponent } from './my-flights/my-flights.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { PaymentsComponent } from './payments/payments.component';
     NavbarComponent,
     FlightListComponent,
     ProfileComponent,
-    PaymentsComponent
+    PaymentsComponent,
+    MyFlightsComponent
   ],
   imports: [
     BrowserModule,

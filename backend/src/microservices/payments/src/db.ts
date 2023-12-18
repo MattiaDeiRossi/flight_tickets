@@ -2,7 +2,7 @@ import { Model, connect, model } from 'mongoose';
 
 export function startDB(){
     if(!process.env.MONGODB_URI)
-        process.env.MONGODB_URI = 'mongodb://mattia:pass@localhost:27017/flight_tickets_db'
+        process.env.MONGODB_URI = 'mongodb://mattia:pass@localhost:27017/payments_db'
     
     connect(process.env.MONGODB_URI)
         .then(

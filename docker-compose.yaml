@@ -15,6 +15,6 @@ services:
         aliases:
           - frontend
     ports:
-      - "8080:80"
+      - "4200:80"
     depends_on:
       - gateway_service

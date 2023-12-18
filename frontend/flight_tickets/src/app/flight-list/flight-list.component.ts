@@ -39,6 +39,9 @@ export class FlightListComponent {
         this.py.get_payments().subscribe({
           next: (flights_sold: FlightUserPayment[]) => {
             this.filterFlights(flights, flights_sold);
+            this.cities = Array.from(new Set([...this.flights.map(flight => flight.departure.airport), ...this.flights.map(flight => flight.arrival.airport)]));
+            this.cities.sort()
+
 
             for (let i = 0; i < this.flights.length; i++) {
               this.costs.push(Math.random() * 150);
@@ -118,15 +121,12 @@ export class FlightListComponent {
       error: (e) => {
         if(e.error.error === "No flights found"){
           alert(e.error.error)
-          this.fs.get_flights_by_departure_arrival(f.value.departure, f.value.arrivar).subscribe({
+          this.fs.get_flights_by_departure_arrival(f.value.departure, f.value.arrival).subscribe({
             next: (d)=>{
-
-              console.log(d)
 
               this.py.get_payments().subscribe({
                 next: (flights_sold: FlightUserPayment[]) => {
                   this.filterFlights(d, flights_sold);
-                  this.cities = [...new Set(this.flights.map(flight => flight.departure.airport).concat(this.flights.map(flight => flight.arrival.airport)))];
                 },
                 error: (e) => {
                   console.log(e)
@@ -135,7 +135,7 @@ export class FlightListComponent {
 
             },
             error: (e)=>{
-              console.log(e)
+              this.flights = []
             }
           })
         }

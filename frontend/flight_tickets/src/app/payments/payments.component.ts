@@ -20,6 +20,7 @@ export class PaymentsComponent {
   }
 
   onSubmit(f: NgForm) {
+
     const payment : FlightUserPayment = {
       userId: this.auth.get_id(),
       flightId: this.flightId,
@@ -27,7 +28,7 @@ export class PaymentsComponent {
     }
     this.py.post_payment(payment).subscribe({
       next: (n)=>{
-        
+        console.log(n)
       },
       error: (e)=>{
         console.log(e)

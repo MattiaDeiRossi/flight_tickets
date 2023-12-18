@@ -88,38 +88,6 @@ services:
     command: "npm start"
 
   # --- DBs ---
-  mongodb_users:
-    image: mongo
-    restart: always
-    container_name: mongodb_users
-    networks:
-      - my_net
-    ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-      MONGO_INITDB_DATABASE: users_db
-    volumes:
-      - mongodbdata_users:/data/db
-      - ./src/DBs/mongodb_users/init-mongo.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-
-  mongodb_payments:
-    image: mongo
-    restart: always
-    container_name: mongodb_payments
-    networks:
-      - my_net
-    ports:
-      - "27019:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-      MONGO_INITDB_DATABASE: payments_db
-    volumes:
-      - mongodbdata_payments:/data/db
-      - ./src/DBs/mongodb_payments/init-mongo.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-
   mongodb_flight_tickets:
     build:
       context: ./src/DBs/mongodb_flight_tickets
@@ -137,3 +105,36 @@ services:
     volumes:
       - mongodbdata_flight_tickets:/data/db
       - ./src/DBs/mongodb_flight_tickets/init-mongo.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+
+  mongodb_payments:
+    image: mongo
+    restart: always
+    container_name: mongodb_payments
+    networks:
+      - my_net
+    ports:
+      - "27019:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: payments_db
+    volumes:
+      - mongodbdata_payments:/data/db
+      - ./src/DBs/mongodb_payments/init-mongo.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    
+  mongodb_users:
+    image: mongo
+    restart: always
+    container_name: mongodb_users
+    networks:
+      - my_net
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: users_db
+    volumes:
+      - mongodbdata_users:/data/db
+      - ./src/DBs/mongodb_users/init-mongo.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+
