@@ -20,26 +20,58 @@ const proxyA = createProxyMiddleware({
     target: users_service, changeOrigin: true,
     pathRewrite: {
         '^/api/users': '',
-    }
+    }, onProxyReq: (proxyReq, req: Request, res) => {
+        if ((req.method == "POST" || req.method == "PUT") && req.body) {
+            let body = req.body;
+            let newBody = '';
+            try {
+                newBody = JSON.stringify(body);
+                proxyReq.setHeader('content-length', Buffer.byteLength(newBody, 'utf8'));
+                proxyReq.write(newBody);
+                proxyReq.end();
+            } catch (e) {
+                console.log('Stringify err', e)
+            }
+        }
+    },
 });
 const proxyB = createProxyMiddleware({
     target: flight_tickets_service, changeOrigin: true,
     pathRewrite: {
         '^/api/flights': '',
-    }
+    }, onProxyReq: (proxyReq, req: Request, res) => {
+        if ((req.method == "POST" || req.method == "PUT") && req.body) {
+            let body = req.body;
+            let newBody = '';
+            try {
+                newBody = JSON.stringify(body);
+                proxyReq.setHeader('content-length', Buffer.byteLength(newBody, 'utf8'));
+                proxyReq.write(newBody);
+                proxyReq.end();
+            } catch (e) {
+                console.log('Stringify err', e)
+            }
+        }
+    },
 });
 const proxyC = createProxyMiddleware({
     target: payments_service, changeOrigin: true,
     pathRewrite: {
         '^/api/payments': '',
-    }, onProxyReq: (proxyRes, req: Request, res: Response) => {
-        console.log(`onProxyReq: Request received for ${req.url} after path rewrite`);
-
-    },
-     onProxyRes: (proxyRes, req: Request, res: Response) => {
-        console.log(`onProxyRes: Request received for ${res.url} after path rewrite`);
-    },
-    logLevel: 'debug',
+    }, onProxyReq: (proxyReq, req: Request, res) => {
+        if ((req.method == "POST" || req.method == "PUT") && req.body) {
+            let body = req.body;
+            let newBody = '';
+            try {
+                newBody = JSON.stringify(body);
+                proxyReq.setHeader('content-length', Buffer.byteLength(newBody, 'utf8'));
+                proxyReq.write(newBody);
+                proxyReq.end();
+            } catch (e) {
+                console.log('Stringify err', e)
+            }
+        }
+    }
 });
 
 app.use(express.json());
