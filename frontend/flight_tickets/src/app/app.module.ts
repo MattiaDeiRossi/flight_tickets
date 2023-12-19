@@ -10,8 +10,8 @@ import { SignupComponent } from './signup/signup.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { FlightListComponent } from './flight-list/flight-list.component';
 import { ProfileComponent } from './profile/profile.component';
-import { PaymentsComponent } from './payments/payments.component';
 import { MyFlightsComponent } from './my-flights/my-flights.component';
+import { UsersComponent } from './users/users.component';
 
 @NgModule({
   declarations: [
@@ -21,8 +21,8 @@ import { MyFlightsComponent } from './my-flights/my-flights.component';
     NavbarComponent,
     FlightListComponent,
     ProfileComponent,
-    PaymentsComponent,
-    MyFlightsComponent
+    MyFlightsComponent,
+    UsersComponent
   ],
   imports: [
     BrowserModule,

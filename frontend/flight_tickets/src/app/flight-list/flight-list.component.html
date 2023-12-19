@@ -19,7 +19,8 @@
                 </select>
 
                 <label for="departureDate">Departure Date </label>
-                <input name="departureDate" type="date" class="form-control" id="departureDate" [(ngModel)]="search.departure_date">
+                <input name="departureDate" type="date" class="form-control" id="departureDate"
+                    [(ngModel)]="search.departure_date">
                 <p></p>
                 <button class="btn btn-lg btn-primary btn-block" type="submit">Find Ticket</button>
             </form>
@@ -38,7 +39,7 @@
                     <p class="mb-1">Departure Date: {{ flight.flight_date }}</p>
                     <p class="mb-1">Cost: €{{ flight.price | number:'1.2-2' }}</p>
                 </div>
-                <button class="btn btn-success" (click)="purchaseTicket(flight)">Purchase</button>
+                <button type="button" class="btn btn-danger btn-sm" (click)="onPurchase(flight)">Purchase</button>
             </div>
         </div>
     </div>

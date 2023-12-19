@@ -8,29 +8,28 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <a class="nav-link" routerLink="/flightslist">Home</a>
-        </li>
+
+        <ng-container *ngIf="auth.is_logged() && !auth.is_admin()">
+          <li class="nav-item active">
+            <a class="nav-link" routerLink="/flightslist">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/myflights">My flights</a>
+          </li>
+        </ng-container>
+
         <ng-container *ngIf="auth.is_logged()">
           <li class="nav-item">
-            <a class="nav-link" routerLink="/dashboard">My flights</a>
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/profile">My profile</a>
-        </ng-container>
-        <ng-container *ngIf="auth.is_admin()">
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/profile">Stats</a>
+            <a class="nav-link" routerLink="/myprofile">My profile</a>
           </li>
+        </ng-container>
+        
+        <ng-container *ngIf="auth.is_logged() && auth.is_admin()">
           <li class="nav-item">
             <a class="nav-link" routerLink="/users">Users</a>
           </li>
         </ng-container>
       </ul>
-      <ul class="navbar-nav navbar-right">
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/login">Login</a>
-        </li>
-    </ul>
     </div>
   </div>
 </nav>

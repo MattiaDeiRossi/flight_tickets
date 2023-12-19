@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { User } from '../interfaces';
-import { Router } from '@angular/router';
 import { UsersService } from '../users.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-users',
@@ -10,35 +10,59 @@ import { UsersService } from '../users.service';
 })
 export class UsersComponent {
   public users: User[] = [];
-  public del_username: string = "";
 
-  constructor(private hs: UsersService, private router: Router) {
+  constructor(public hs: UsersService) {
     this.getUsers();
   }
 
-  getUsers(){
+  getUsers() {
     this.hs.get_users().subscribe({
       next: (d) => {
         this.users = d;
       },
       error: (err) => {
-        alert('Login error: ' + err.message);
+        Swal.fire({
+          title: err.message,
+          icon: 'warning',
+          allowOutsideClick: false,
+        }).then(() => { })
       }
     })
   }
 
-  setDelUsername(user: User){
-    this.del_username = user.username;
+  onFlights(user: User) {
+
   }
-  onClicked(del_username: string) {
-    this.hs.del_user(del_username).subscribe({
-      next: (d) => {
-        console.log('User deleted: ' + JSON.stringify(d));
-        this.getUsers();
-      },
-      error: (err) => {
-        alert('Login error: ' + err.message);
+
+  onDelete(del_username: User) {
+    Swal.fire({
+      title: "Do you really want to purchase delete user?",
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Confirm",
+      denyButtonText: "Cancel"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.hs.del_user(del_username.username).subscribe({
+          next: (d) => {
+            console.log('User deleted: ' + JSON.stringify(d));
+            this.getUsers();
+          },
+          error: (err) => {
+            Swal.fire({
+              title: err.message,
+              icon: 'warning',
+              allowOutsideClick: false,
+            }).then(() => { })
+          }
+        })
+
+        Swal.fire("Done!", "", "success");
+      } else if (result.isDenied) {
+        Swal.fire("Cancelled", "", "info");
+        return;
       }
-    })
+    });
+
   }
 }

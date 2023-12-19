@@ -19,6 +19,6 @@ export class ProfileComponent {
 
   logout() {
     this.auth.logout();
-    this.router.navigate(['/flightslist']);
+    this.router.navigate(['/login']);
   }
 }

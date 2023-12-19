@@ -11,18 +11,12 @@ import { AuthService } from '../auth.service';
 })
 export class MyFlightsComponent {
   flights: FlightDocument[] = [];
-  costs: number[] = [];
   constructor(private py: PaymentsService, private fs: FlightsService, private auth: AuthService) {
     this.fs.get_flights().subscribe({
       next: (flights: FlightDocument[]) => {
         this.py.get_payments().subscribe({
           next: (flights_sold: FlightUserPayment[]) => {
             this.filterFlights(flights, flights_sold);
-
-
-            for (let i = 0; i < this.flights.length; i++) {
-              this.costs.push(Math.random() * 150);
-            }
           },
           error: (e) => {
             console.log(e)

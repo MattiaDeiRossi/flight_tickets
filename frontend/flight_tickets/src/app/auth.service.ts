@@ -4,6 +4,7 @@ import { tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { jwtDecode } from "jwt-decode";
 import { ROLES, User } from './interfaces';
+import Swal from 'sweetalert2';
 
 interface TokenData {
   username: string,
@@ -46,8 +47,13 @@ export class AuthService {
     return this.http.get(this.url + '/login', options).pipe(
       tap((data) => {
         const recv = JSON.parse(JSON.stringify(data));
-        if (recv.error == true)
-          alert('User does not exists');
+        if (recv.error == true){
+          Swal.fire({
+            title: 'User does not exists',
+            icon: 'error',
+            allowOutsideClick: true,
+          })
+        }
         this.token = (data as ReceivedToken).token;
         localStorage.setItem('token', this.token as string);
       }));

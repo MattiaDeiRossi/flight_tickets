@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { User } from '../interfaces';
+import { ROLES, User } from '../interfaces';
 import { AuthService } from '../auth.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-signup',
@@ -11,17 +12,36 @@ import { AuthService } from '../auth.service';
 })
 export class SignupComponent {
   public user: User = { password: '', username: '', role: '' };
+  public admincode: string = '';
 
   constructor(private auth: AuthService, private router: Router) { }
 
   onSubmit(f: NgForm) {
-    this.auth.register(f.value).subscribe({
+    console.log(f.value)
+    console.log(this.user)
+    if(this.user.role === ROLES.ADMIN && this.admincode != '00000000'){
+      Swal.fire({
+        title: "AdminCode is wrong!",
+        icon: 'error',
+        allowOutsideClick: false,
+      }).then(()=>{
+        return;
+      })
+    }
+
+    this.auth.register(this.user).subscribe({
       next: (d) => {
         console.log('Registration complete of: ' + JSON.stringify(d));
         this.router.navigate(['/login']);
       },
       error: (err) => {
-        alert('Sign up error: ' + err.message);
+        Swal.fire({
+          title: err.message,
+          icon: 'error',
+          allowOutsideClick: false,
+        }).then(()=>{
+          return;
+        })
       }
     })
   }

@@ -25,7 +25,7 @@ describe('User API', () => {
       const newUser : User = {
         username: 'testuser',
         password: 'pass',
-        role: 'boss'
+        role: 'admin'
       };
 
       const response = await request(app)

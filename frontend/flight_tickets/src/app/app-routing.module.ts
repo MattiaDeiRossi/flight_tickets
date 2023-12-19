@@ -5,17 +5,17 @@ import { SignupComponent } from './signup/signup.component';
 import { ProfileComponent } from './profile/profile.component';
 import { AuthGuardService } from './auth-guard.service';
 import { UsersComponent } from './users/users.component';
-import { PaymentsComponent } from './payments/payments.component';
 import { FlightListComponent } from './flight-list/flight-list.component';
+import { MyFlightsComponent } from './my-flights/my-flights.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', title: 'Login', component: LoginComponent },
   { path: 'signup', title: 'Register', component: SignupComponent },
-  { path: 'profile', title: 'Profile', component: ProfileComponent, canActivate: [AuthGuardService] },
+  { path: 'myprofile', title: 'My Profile', component: ProfileComponent, canActivate: [AuthGuardService] },
+  { path: 'myflights', title: 'My flights', component: MyFlightsComponent, canActivate: [AuthGuardService] },
   { path: 'users', title: 'Users', component: UsersComponent, canActivate: [AuthGuardService] },
-  { path: 'flightslist', title: 'Flights List', component: FlightListComponent },
-  { path: 'payments', title: 'Payments', component: PaymentsComponent, canActivate: [AuthGuardService] },
+  { path: 'flightslist', title: 'Flights List', component: FlightListComponent, canActivate: [AuthGuardService] },
 ];
 
 @NgModule({

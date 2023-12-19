@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from './auth.service';
+import Swal from 'sweetalert2';
 
 @Injectable({
   providedIn: 'root'
@@ -8,10 +9,10 @@ import { AuthService } from './auth.service';
 export class AuthGuardService {
 
   private protectedRoutes: { path: string, roles: string[] }[] = [
-    { path: 'users', roles: ['boss'] },
-    { path: 'profile', roles: ['boss','employee'] },
-    { path: 'payments', roles: ['boss', 'employee'] },
-
+    { path: 'users', roles: ['admin'] },
+    { path: 'myprofile', roles: ['client', 'admin'] },
+    { path: 'myflights', roles: ['client'] },
+    { path: 'flightslist', roles: ['client'] },
   ];
 
   constructor(private auth: AuthService, private router: Router) { }
@@ -26,9 +27,15 @@ export class AuthGuardService {
       .flat();
 
     if (allowedRoles.includes(userRole)) {
-      return true; // L'utente può accedere
+      return true; 
     } else {
-      alert('Unauthorized');
+      Swal.fire({
+        title: 'Unauthorized',
+        icon: 'error',
+        allowOutsideClick: true,
+      }).then(() => {
+        return false;
+      });
       return false; 
     }
   }

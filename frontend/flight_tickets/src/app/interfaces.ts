@@ -48,8 +48,8 @@ export interface FlightDocument{
 
 
 export enum ROLES {
-  ADMIN = "boss",
-  EMPLOYEE = "employee",
+  ADMIN = "admin",
+  CLIENT = "client",
 }
 
 export interface FlightUserPayment {
