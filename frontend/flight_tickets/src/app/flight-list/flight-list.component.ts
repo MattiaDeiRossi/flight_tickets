@@ -39,7 +39,7 @@ export class FlightListComponent {
     this.refreshFlights()
   }
 
-  refreshFlights(){
+  refreshFlights() {
     this.fs.get_flights().subscribe({
       next: (flights: FlightDocument[]) => {
         this.py.get_payments().subscribe({
@@ -52,14 +52,14 @@ export class FlightListComponent {
               f.price = Math.random() * 150;
             })
 
-            this.fs.update_flights(this.flights).subscribe({
-              next: (n) => {
+            // this.fs.update_flights(this.flights).subscribe({
+            //   next: (n) => {
 
-              },
-              error: (e) => {
-                console.log(e)
-              }
-            })
+            //   },
+            //   error: (e) => {
+            //     console.log(e)
+            //   }
+            // })
           },
           error: (e) => {
             console.log(e)
@@ -77,35 +77,27 @@ export class FlightListComponent {
     this.flights = flights.filter(flight => !flights_sold.some(soldFlight => soldFlight.flightId === flight._id));
   }
 
-  addUserTimer(username: string, flightId: string): boolean {
-    const isFlightIdPresent = this.isFlightIdPresent(flightId);
-
-    if (!isFlightIdPresent) {
-      if (!this.timers[username]) {
-        this.timers[username] = [];
-      }
-
-      const userTimer: UserTimeout = {
-        flightId: flightId,
-        timeout: setTimeout(() => {
-          Swal.fire({
-            title: 'Timeout reached for payment',
-            icon: 'warning',
-            allowOutsideClick: false,
-          }).then(() => {
-            this.auth.logout();
-            this.router.navigate(['/login']);
-          });
-        }, this.duration)
-      };
-
-      this.timers[username].push(userTimer);
-
-
-      return true;
-    } else {
-      return false;
+  addUserTimer(username: string, flightId: string): void {
+    if (!this.timers[username]) {
+      this.timers[username] = [];
     }
+
+    const userTimer: UserTimeout = {
+      flightId: flightId,
+      timeout: setTimeout(() => {
+        Swal.fire({
+          title: 'Timeout reached for payment',
+          icon: 'warning',
+          allowOutsideClick: false,
+        }).then(() => {
+          this.auth.logout();
+          this.router.navigate(['/login']);
+        });
+      }, this.duration)
+    };
+
+    this.timers[username].push(userTimer);
+
   }
 
   stopUserTimer(username: string) {
@@ -116,16 +108,6 @@ export class FlightListComponent {
     }
   }
 
-  isFlightIdPresent(flightId: string): boolean {
-    for (const username of Object.keys(this.timers)) {
-      const userTimers = this.timers[username];
-      if (userTimers.some(timer => timer.flightId === flightId)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   onSubmit(f: NgForm) {
     console.log(f.value)
     this.fs.get_flights_by_departure_arrival_startdate(f.value.departure, f.value.arrival, f.value.departureDate).subscribe({
@@ -134,7 +116,9 @@ export class FlightListComponent {
         this.py.get_payments().subscribe({
           next: (flights_sold: FlightUserPayment[]) => {
             this.filterFlights(fs, flights_sold);
-
+            this.flights.forEach((f: FlightDocument) => {
+              f.price = Math.random() * 150;
+            })
           },
           error: (e) => {
             console.log(e)
@@ -155,6 +139,9 @@ export class FlightListComponent {
               this.py.get_payments().subscribe({
                 next: (flights_sold: FlightUserPayment[]) => {
                   this.filterFlights(d, flights_sold);
+                  this.flights.forEach((f: FlightDocument) => {
+                    f.price = Math.random() * 150;
+                  })
                 },
                 error: (e) => {
                   console.log(e)
@@ -191,7 +178,7 @@ export class FlightListComponent {
       if (result.isConfirmed) {
         this.py.post_payment(payment).subscribe({
           next: (n) => {
-            if (n.result){
+            if (n.result) {
               this.stopUserTimer(this.auth.get_username())
               this.refreshFlights()
               Swal.fire("Done!", "", "success");
@@ -199,7 +186,7 @@ export class FlightListComponent {
           },
           error: (e) => {
             console.log(e)
-            Swal.fire("Cancelled", e.error, "info");
+            Swal.fire("Cancelled", "", "info");
 
           }
         })

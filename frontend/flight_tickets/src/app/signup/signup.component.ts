@@ -17,8 +17,6 @@ export class SignupComponent {
   constructor(private auth: AuthService, private router: Router) { }
 
   onSubmit(f: NgForm) {
-    console.log(f.value)
-    console.log(this.user)
     if(this.user.role === ROLES.ADMIN && this.admincode != '00000000'){
       Swal.fire({
         title: "AdminCode is wrong!",

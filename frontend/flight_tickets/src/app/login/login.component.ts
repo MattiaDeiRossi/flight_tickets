@@ -19,7 +19,7 @@ export class LoginComponent {
   onSubmit(f: NgForm) {
     this.auth.login(f.value.username, f.value.password).subscribe({
       next: (d) => {
-        console.log('Login granted: ' + f.value.username);
+        // console.log('Login granted: ' + f.value.username);
         // console.log('User service token: ' + this.auth.get_token());
 
         this.us.get_user(f.value.username).subscribe({

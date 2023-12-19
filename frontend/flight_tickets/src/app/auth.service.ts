@@ -61,6 +61,7 @@ export class AuthService {
 
   logout() {
     console.log('Logging out');
+    this.token = ''
     localStorage.removeItem('token')
   }
 

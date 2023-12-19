@@ -24,28 +24,26 @@ app.get('/flights', (req: Request, res: Response) => {
     })
 });
 
-app.put('/flights', async (req: Request, res: Response) => {
-    try {
-        const flightUpdates = req.body.map((element: FlightDocument) => ({
-            filter: { id: element.id },
-            update: { $set: { price: element.price } }
-        }));
+// app.put('/flights', async (req: Request, res: Response) => {
+//     try {
+//         const updates = req.body.map((element: FlightDocument) => ({
+//             updateOne: {
+//                 filter: { _id: element._id },
+//                 update: { $set: { price: element.price } }
+//             }
+//         }));
 
-        const updateOperations = flightUpdates.map(update => ({
-            updateMany: {
-                filter: update.filter,
-                update: update.update
-            }
-        }));
+//         if (updates.length > 0) {
+//             await FlightModel.bulkWrite(updates);
+//         }
 
-        await FlightModel.bulkWrite(updateOperations);
+//         res.status(200).json({ message: 'Update completed successfully' });
+//     } catch (error) {
+//         console.error('Error during update:', error);
+//         res.status(500).json({ error: 'Error during flight updates' });
+//     }
+// });
 
-        res.status(200).json({ message: 'Update completed successfully' });
-    } catch (error) {
-        console.error('Error during update:', error);
-        res.status(500).json({ error: 'Error during flight updates' });
-    }
-});
 
 
 

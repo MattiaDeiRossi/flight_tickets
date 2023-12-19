@@ -7,8 +7,11 @@
                     <h5 class="mb-1">Departure: {{ flight.departure.airport }} -> Arrival: {{ flight.arrival.airport }}
                     </h5>
                     <p class="mb-1">Departure Date: {{ flight.flight_date }}</p>
-                    <p class="mb-1">Cost: €{{ flight.price | number:'1.2-2' }}</p>
+                    <!-- <p class="mb-1">Cost: €{{ flight.price | number:'1.2-2' }}</p> -->
                 </div>
+                <ng-container *ngIf="auth.is_logged() && auth.is_admin()">
+                    <button type="button" class="btn btn-danger btn-sm" (click)="onRefund(flight)">Refund</button>
+                </ng-container>
             </div>
         </div>
     </div>

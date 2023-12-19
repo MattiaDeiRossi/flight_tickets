@@ -44,6 +44,15 @@ app.get('/payments/:flightId', (req: Request, res: Response) => {
   })
 });
 
+app.delete('/payments/:flightId', (req: Request, res: Response) => {
+  FlightUserPaymentModel.deleteOne({ flightId: req.params.flightId }).then(
+    (data) => {
+      return res.status(200).json({ count: data.deletedCount });
+    }).catch((reason) => {
+      return res.status(404).json({ error: reason });
+    })
+});
+
 // const HOST: string = '0.0.0.0';
 const PORT: number = 3003;
 

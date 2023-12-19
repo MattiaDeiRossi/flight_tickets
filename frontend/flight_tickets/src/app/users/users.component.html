@@ -1,16 +1,18 @@
 <div class="container mt-4">
   <div class="card-group" style="margin-left: 18%; margin-right: 18%; width: auto;">
     <div *ngFor="let user of users">
-      <div class="card" style="width: 18rem;">
+      <div class="card" style="width: 22rem;">
         <div class="card-header d-flex justify-content-between align-items-center">
-          <h5 class="card-title">Username: {{user.username}}</h5>
-          <!-- <ng-container *ngIf="hs.is_logged() && !hs.is_admin()"> -->
+          <h4 class="card-title">Username: {{user.username}}</h4>
+          <ng-container *ngIf="user.role !== 'admin'">
             <button type="button" class="btn btn-info btn-sm" (click)="onFlights(user)">Flights</button>
-          <!-- </ng-container> -->
+          </ng-container>
           <button type="button" class="btn btn-danger btn-sm" (click)="onDelete(user)">Delete</button>
         </div>
         <div class="card-body">
-          <h6 class="card-subtitle mb-2 text-muted">Role: {{user.role}}</h6>
+          <div class="card-text">
+            <p><strong>Role:</strong> {{user.role}}</p>
+          </div>
         </div>
       </div>
     </div>

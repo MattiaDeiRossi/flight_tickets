@@ -11,7 +11,7 @@ export class AuthGuardService {
   private protectedRoutes: { path: string, roles: string[] }[] = [
     { path: 'users', roles: ['admin'] },
     { path: 'myprofile', roles: ['client', 'admin'] },
-    { path: 'myflights', roles: ['client'] },
+    { path: 'myflights', roles: ['client', 'admin'] },
     { path: 'flightslist', roles: ['client'] },
   ];
 

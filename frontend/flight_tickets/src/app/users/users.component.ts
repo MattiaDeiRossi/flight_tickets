@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { User } from '../interfaces';
 import { UsersService } from '../users.service';
 import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-users',
@@ -11,7 +12,7 @@ import Swal from 'sweetalert2';
 export class UsersComponent {
   public users: User[] = [];
 
-  constructor(public hs: UsersService) {
+  constructor(public hs: UsersService, private router: Router) {
     this.getUsers();
   }
 
@@ -31,7 +32,15 @@ export class UsersComponent {
   }
 
   onFlights(user: User) {
-
+    this.hs.get_user(user.username).subscribe({
+      next: (usr) =>{
+        console.log(usr._id)
+        this.router.navigate(['/myflights'],{ queryParams: { idUser: usr._id } });
+      },
+      error: (e)=>{
+        console.log(e.error)
+      }
+    })
   }
 
   onDelete(del_username: User) {

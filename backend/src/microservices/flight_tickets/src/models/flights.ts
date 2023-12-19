@@ -87,7 +87,7 @@ const FlightSchema = new Schema<FlightDocument>({
   },
   aircraft: String,
   live: String,
-  price: Number
+  // price: Number
 });
 
 const FlightModel = model<FlightDocument>('Flight', FlightSchema);
