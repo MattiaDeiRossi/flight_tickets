@@ -34,6 +34,7 @@ export class FlightListComponent {
     departure_date: new Date()
   }
   cities: string[] = [];
+  pendingflightId: string = '';
 
   constructor(private py: PaymentsService, private fs: FlightsService, private router: Router, private auth: AuthService) {
     this.refreshFlights()
@@ -90,6 +91,15 @@ export class FlightListComponent {
           icon: 'warning',
           allowOutsideClick: false,
         }).then(() => {
+          this.py.delete_payment(this.pendingflightId).subscribe({
+            next: (n) => {
+              Swal.fire("Cancelled", "", "info");
+  
+            },
+            error: (e) => {
+              console.log(e)
+            }
+          })
           this.auth.logout();
           this.router.navigate(['/login']);
         });
@@ -160,41 +170,68 @@ export class FlightListComponent {
 
 
   onPurchase(flight: any) {
+    this.pendingflightId = flight._id;
     this.addUserTimer(this.auth.get_username(), flight._id);
     const payment: FlightUserPayment = {
       userId: this.auth.get_id(),
       flightId: flight._id,
-      isPaid: true
+      isPaid: false,
     }
 
+    this.py.post_payment(payment).subscribe({
+      next: (n) => {
+        if (n.result) {
+          this.confirmPayment(payment)
+          this.refreshFlights()
+        }
+      },
+      error: (e) => {
+        // there is already a payment of flightID in DB
+        Swal.fire("Error", "Retry later", "error");
+        this.stopUserTimer(this.auth.get_username())
+        this.refreshFlights()
+      }
+    })
+  }
 
+  confirmPayment(payment: FlightUserPayment) {
     Swal.fire({
       title: "Do you really want to purchase that flight ticket?",
       showDenyButton: true,
-      showCancelButton: true,
+      showCancelButton: false,
       confirmButtonText: "Confirm",
       denyButtonText: "Cancel"
     }).then((result) => {
       if (result.isConfirmed) {
-        this.py.post_payment(payment).subscribe({
+        payment.isPaid = true;
+        this.py.validate_payment(payment).subscribe({
           next: (n) => {
-            if (n.result) {
-              this.stopUserTimer(this.auth.get_username())
+            if (JSON.parse(JSON.stringify(n)).result) {
+              // this.stopUserTimer(this.auth.get_username())
               this.refreshFlights()
               Swal.fire("Done!", "", "success");
+              this.stopUserTimer(this.auth.get_username())
             }
           },
           error: (e) => {
             console.log(e)
-            Swal.fire("Cancelled", "", "info");
+            Swal.fire("Error", "", "error");
 
           }
         })
 
       } else if (result.isDenied) {
-        Swal.fire("Cancelled", "", "info");
-        this.stopUserTimer(this.auth.get_username())
-        return;
+
+        this.py.delete_payment(payment.flightId).subscribe({
+          next: (n) => {
+            this.stopUserTimer(this.auth.get_username())
+            Swal.fire("Cancelled", "", "info");
+          },
+          error: (e) => {
+            console.log(e)
+          }
+        })
+
       }
     });
 

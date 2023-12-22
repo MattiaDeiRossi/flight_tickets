@@ -24,7 +24,6 @@ app.get('/payments', (req: Request, res: Response) => {
 
 app.post('/payments', (req, res) => {
   let f = new FlightUserPaymentModel(req.body);
-  f.setPaid(true);
   f.save().then(() => {
     return res.status(201).json({ result: true });
   }).catch((reason) => {
@@ -37,7 +36,21 @@ app.get('/payments/:flightId', (req: Request, res: Response) => {
     if (payment) {
       return res.status(200).json({ result: true });
     } else {
-      return res.status(500).json({ error: `Flight ${req.params.flightId} is not paid` });
+      return res.status(500).json({ error: `Flight ${req.params.flightId} is not present` });
+    }
+  }).catch((reason) => {
+    return res.status(404).json({ error: reason });
+  })
+});
+
+app.put('/payments/:flightId', (req: Request, res: Response) => {
+  FlightUserPaymentModel.findOne({ flightId: req.params.flightId }).then((payment) => {
+    if (payment) {
+      payment.isPaid = req.body.isPaid;
+      payment.save();
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(500).json({ error: `Flight ${req.params.flightId} is not updated` });
     }
   }).catch((reason) => {
     return res.status(404).json({ error: reason });
