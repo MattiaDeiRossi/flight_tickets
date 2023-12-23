@@ -1,8 +1,15 @@
+# Build stage
+FROM node:20.10.0-alpine AS build
+WORKDIR /usr/src/app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm install -g @angular/cli
+RUN ng analytics off
+RUN ng build
+
+# Deploy
 FROM nginx
 LABEL maintainer="Mattia Dei Rossi <885768@stud.unive.it>"
-
-# Copy static assets from builder stage
-COPY dist/flight_tickets/browser /usr/share/nginx/html
-
-# Expose port 80
+COPY --from=build /usr/src/app/dist/flight_tickets/browser /usr/share/nginx/html
 EXPOSE 80

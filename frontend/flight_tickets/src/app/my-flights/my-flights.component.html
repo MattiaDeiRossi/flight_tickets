@@ -1,0 +1,18 @@
+<div class="container mt-4">
+    <h2>Flight List</h2>
+    <div class="list-group">
+        <div *ngFor="let flight of flights" class="list-group-item">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-1">Departure: {{ flight.departure.airport }} -> Arrival: {{ flight.arrival.airport }}
+                    </h5>
+                    <p class="mb-1">Departure Date: {{ flight.flight_date }}</p>
+                    <!-- <p class="mb-1">Cost: €{{ flight.price | number:'1.2-2' }}</p> -->
+                </div>
+                <ng-container *ngIf="auth.is_logged() && auth.is_admin()">
+                    <button type="button" class="btn btn-danger btn-sm" (click)="onRefund(flight)">Refund</button>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</div>

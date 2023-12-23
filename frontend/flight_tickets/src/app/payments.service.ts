@@ -1,37 +1,89 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
+import { AuthService } from './auth.service';
+import { FlightUserPayment } from './interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PaymentsService {
-  private token: string = '';
+
   public url = 'http://localhost:8081/api/payments';
-  
-  constructor(private http: HttpClient) {
-    const loadedtoken = localStorage.getItem('token');
-    if (!loadedtoken || loadedtoken.length < 1) {
-      console.log("No token found in local storage");
-      this.token = ""
-    } else {
-      this.token = loadedtoken as string;
-      console.log("JWT loaded from local storage.")
-    }
+
+  constructor(private http: HttpClient, private auth: AuthService) {
   }
 
-  create_checkout_session(): Observable<any>{
+
+  get_payment(flightId: string): Observable<any> {
     const options = {
       headers: new HttpHeaders({
+        authorization: 'Bearer ' + this.auth.get_token(),
         'cache-control': 'no-cache',
         'Content-Type': 'application/json',
       })
     };
-
-    return this.http.post(this.url + '/create-checkout-session', {}, options).pipe(
+    return this.http.get(this.url + '/payments/' + flightId, options).pipe(
       tap((data) => {
-        console.log(JSON.stringify(data));
-      })
-    );
+        return JSON.parse(JSON.stringify(data));
+      }));
   }
+
+  get_payments(): Observable<any> {
+    const options = {
+      headers: new HttpHeaders({
+        authorization: 'Bearer ' + this.auth.get_token(),
+        'cache-control': 'no-cache',
+        'Content-Type': 'application/json',
+      })
+    };
+    return this.http.get(this.url + '/payments', options).pipe(
+      tap((data) => {
+        return JSON.parse(JSON.stringify(data));
+      }));
+  }
+
+
+  post_payment(payment: FlightUserPayment): Observable<any> {
+    const options = {
+      headers: new HttpHeaders({
+        authorization: 'Bearer ' + this.auth.get_token(),
+        'cache-control': 'no-cache',
+        'Content-Type': 'application/json',
+      })
+    };
+    return this.http.post(this.url + '/payments', payment, options).pipe(
+      tap((data) => {
+        return JSON.parse(JSON.stringify(data));
+      }));
+  }
+
+  validate_payment(payment: FlightUserPayment) {
+    const options = {
+      headers: new HttpHeaders({
+        authorization: 'Bearer ' + this.auth.get_token(),
+        'cache-control': 'no-cache',
+        'Content-Type': 'application/json',
+      })
+    };
+    return this.http.put(this.url + '/payments/' + payment.flightId, payment, options).pipe(
+      tap((data) => {
+        return JSON.parse(JSON.stringify(data));
+      }));
+  }
+
+  delete_payment(flightId: string): Observable<any> {
+    const options = {
+      headers: new HttpHeaders({
+        authorization: 'Bearer ' + this.auth.get_token(),
+        'cache-control': 'no-cache',
+        'Content-Type': 'application/json',
+      })
+    };
+    return this.http.delete(this.url + '/payments/' + flightId, options).pipe(
+      tap((data) => {
+        return JSON.parse(JSON.stringify(data));
+      }));
+  }
+
 }

@@ -3,13 +3,15 @@ import { Request, Response } from 'express';
 import cors from 'cors';
 import colors from 'colors';
 import { startDB } from './db';
-import FlightModel from './models/flights';
+import FlightModel, { FlightDocument } from './models/flights';
 colors.enable();
 
 const app = express();
 app.use(express.json());
 const cors_option = {
-    origin: 'http://localhost:8080'
+    origin: 'http://localhost:4200',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+
 }
 app.use(cors(cors_option));
 startDB();
@@ -21,6 +23,29 @@ app.get('/flights', (req: Request, res: Response) => {
         return res.status(404).json({ error: reason });
     })
 });
+
+// app.put('/flights', async (req: Request, res: Response) => {
+//     try {
+//         const updates = req.body.map((element: FlightDocument) => ({
+//             updateOne: {
+//                 filter: { _id: element._id },
+//                 update: { $set: { price: element.price } }
+//             }
+//         }));
+
+//         if (updates.length > 0) {
+//             await FlightModel.bulkWrite(updates);
+//         }
+
+//         res.status(200).json({ message: 'Update completed successfully' });
+//     } catch (error) {
+//         console.error('Error during update:', error);
+//         res.status(500).json({ error: 'Error during flight updates' });
+//     }
+// });
+
+
+
 
 app.get('/flights/:departure/:arrival', (req, res) => {
     const { departure, arrival } = req.params;

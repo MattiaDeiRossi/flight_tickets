@@ -14,11 +14,16 @@
 
     <label for="inputRole">Role</label>
     <select name="role" [(ngModel)]="user.role" required id="inputRole" class="form-control">
-      <option value="employee">Employee</option>
-      <option value="employee_manager">Employee Manager</option>
-      <option value="quality_manager">Quality Manager</option>
-      <option value="boss">Boss</option>
+      <option value="admin">Admin</option>
+      <option value="client">Client</option>
     </select>
+
+    <ng-container *ngIf="user.role === 'admin'">
+      <label for="admincode">Admin Code</label>
+      <input name="admincode" [(ngModel)]="admincode" type="text" class="form-control" id="admincode" maxlength="8" pattern="\d*" required
+          placeholder="XXXX XXXX">
+    </ng-container>
+
 
     <p></p>
     <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>

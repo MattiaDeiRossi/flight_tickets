@@ -7,24 +7,22 @@ import { FormsModule } from '@angular/forms';
 import { LoginComponent } from './login/login.component';
 import { HttpClientModule } from '@angular/common/http';
 import { SignupComponent } from './signup/signup.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
 import { NavbarComponent } from './navbar/navbar.component';
-import { FlightSearchComponent } from './flight-search/flight-search.component';
 import { FlightListComponent } from './flight-list/flight-list.component';
 import { ProfileComponent } from './profile/profile.component';
-import { PaymentsComponent } from './payments/payments.component';
+import { MyFlightsComponent } from './my-flights/my-flights.component';
+import { UsersComponent } from './users/users.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     SignupComponent,
-    DashboardComponent,
     NavbarComponent,
-    FlightSearchComponent,
     FlightListComponent,
     ProfileComponent,
-    PaymentsComponent
+    MyFlightsComponent,
+    UsersComponent
   ],
   imports: [
     BrowserModule,

@@ -1,4 +1,23 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { FlightDocument, FlightUserPayment, User } from '../interfaces';
+import { FlightsService } from '../flights.service';
+import { AuthService } from '../auth.service';
+import { PaymentsService } from '../payments.service';
+import { NgForm } from '@angular/forms';
+import Swal from 'sweetalert2';
+
+
+interface SearchForm {
+  departure: string,
+  arrival: string,
+  departure_date: Date
+}
+
+export interface UserTimeout {
+  flightId: string;
+  timeout: any;
+}
 
 @Component({
   selector: 'app-flight-list',
@@ -6,32 +25,216 @@ import { Component } from '@angular/core';
   styleUrls: ['./flight-list.component.css']
 })
 export class FlightListComponent {
-purchaseTicket(_t6: any) {
-throw new Error('Method not implemented.');
-}
-  flights: any = [];
-  loadMoreCount = 10;
+  duration: number = 1000 * 60 * 0.5; // 1/2 minute;
+  flights: FlightDocument[] = [];
+  timers: { [username: string]: UserTimeout[] } = {};
+  search: SearchForm = {
+    departure: '',
+    arrival: '',
+    departure_date: new Date()
+  }
+  cities: string[] = [];
+  pendingflightId: string = '';
 
-  constructor() {
-    this.loadFlights();
+  constructor(private py: PaymentsService, private fs: FlightsService, private router: Router, private auth: AuthService) {
+    this.refreshFlights()
   }
 
-  loadFlights() {
-    for (let i = 0; i < this.loadMoreCount; i++) {
-      const flight = {
-        departure: 'City' + (i + 1),
-        destination: 'City' + (i + 2),
-        departureDate: new Date().toDateString(),
-        arrivalDate: new Date(new Date().getTime() + 86400000).toDateString(), // Adding 1 day (86400000 milliseconds)
-        cost: Math.floor(Math.random() * 500) + 100 // Random cost between 100 and 600
-      };
-      this.flights.push(flight);
+  refreshFlights() {
+    this.fs.get_flights().subscribe({
+      next: (flights: FlightDocument[]) => {
+        this.py.get_payments().subscribe({
+          next: (flights_sold: FlightUserPayment[]) => {
+            this.filterFlights(flights, flights_sold);
+            this.cities = Array.from(new Set([...this.flights.map(flight => flight.departure.airport), ...this.flights.map(flight => flight.arrival.airport)]));
+            this.cities.sort();
+
+            this.flights.forEach((f: FlightDocument) => {
+              f.price = Math.random() * 150;
+            })
+
+            // this.fs.update_flights(this.flights).subscribe({
+            //   next: (n) => {
+
+            //   },
+            //   error: (e) => {
+            //     console.log(e)
+            //   }
+            // })
+          },
+          error: (e) => {
+            console.log(e)
+          }
+        })
+      },
+      error: (e) => {
+        console.log(e);
+      }
+    })
+
+  }
+
+  filterFlights(flights: FlightDocument[], flights_sold: FlightUserPayment[]) {
+    this.flights = flights.filter(flight => !flights_sold.some(soldFlight => soldFlight.flightId === flight._id));
+  }
+
+  addUserTimer(username: string, flightId: string): void {
+    if (!this.timers[username]) {
+      this.timers[username] = [];
+    }
+
+    const userTimer: UserTimeout = {
+      flightId: flightId,
+      timeout: setTimeout(() => {
+        Swal.fire({
+          title: 'Timeout reached for payment',
+          icon: 'warning',
+          allowOutsideClick: false,
+        }).then(() => {
+          this.py.delete_payment(this.pendingflightId).subscribe({
+            next: (n) => {
+              Swal.fire("Cancelled", "", "info");
+  
+            },
+            error: (e) => {
+              console.log(e)
+            }
+          })
+          this.auth.logout();
+          this.router.navigate(['/login']);
+        });
+      }, this.duration)
+    };
+
+    this.timers[username].push(userTimer);
+
+  }
+
+  stopUserTimer(username: string) {
+    const userTimeout = this.timers[username].pop();
+
+    if (userTimeout) {
+      clearTimeout(userTimeout.timeout);
     }
   }
 
-  onScroll(event: any) {
-    if (event.target.scrollTop + event.target.clientHeight >= event.target.scrollHeight) {
-      this.loadFlights();
+  onSubmit(f: NgForm) {
+    console.log(f.value)
+    this.fs.get_flights_by_departure_arrival_startdate(f.value.departure, f.value.arrival, f.value.departureDate).subscribe({
+      next: (fs) => {
+
+        this.py.get_payments().subscribe({
+          next: (flights_sold: FlightUserPayment[]) => {
+            this.filterFlights(fs, flights_sold);
+            this.flights.forEach((f: FlightDocument) => {
+              f.price = Math.random() * 150;
+            })
+          },
+          error: (e) => {
+            console.log(e)
+          }
+        })
+      },
+      error: (e) => {
+        if (e.error.error === "No flights found") {
+          Swal.fire({
+            title: e.error.error,
+            icon: 'warning',
+            allowOutsideClick: false,
+          }).then(() => { })
+
+          this.fs.get_flights_by_departure_arrival(f.value.departure, f.value.arrival).subscribe({
+            next: (d) => {
+
+              this.py.get_payments().subscribe({
+                next: (flights_sold: FlightUserPayment[]) => {
+                  this.filterFlights(d, flights_sold);
+                  this.flights.forEach((f: FlightDocument) => {
+                    f.price = Math.random() * 150;
+                  })
+                },
+                error: (e) => {
+                  console.log(e)
+                }
+              })
+
+            },
+            error: (e) => {
+              this.flights = []
+            }
+          })
+        }
+      }
+    })
+  }
+
+
+  onPurchase(flight: any) {
+    this.pendingflightId = flight._id;
+    this.addUserTimer(this.auth.get_username(), flight._id);
+    const payment: FlightUserPayment = {
+      userId: this.auth.get_id(),
+      flightId: flight._id,
+      isPaid: false,
     }
+
+    this.py.post_payment(payment).subscribe({
+      next: (n) => {
+        if (n.result) {
+          this.confirmPayment(payment)
+          this.refreshFlights()
+        }
+      },
+      error: (e) => {
+        // there is already a payment of flightID in DB
+        Swal.fire("Error", "Retry later", "error");
+        this.stopUserTimer(this.auth.get_username())
+        this.refreshFlights()
+      }
+    })
+  }
+
+  confirmPayment(payment: FlightUserPayment) {
+    Swal.fire({
+      title: "Do you really want to purchase that flight ticket?",
+      showDenyButton: true,
+      showCancelButton: false,
+      confirmButtonText: "Confirm",
+      denyButtonText: "Cancel"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        payment.isPaid = true;
+        this.py.validate_payment(payment).subscribe({
+          next: (n) => {
+            if (JSON.parse(JSON.stringify(n)).result) {
+              // this.stopUserTimer(this.auth.get_username())
+              this.refreshFlights()
+              Swal.fire("Done!", "", "success");
+              this.stopUserTimer(this.auth.get_username())
+            }
+          },
+          error: (e) => {
+            console.log(e)
+            Swal.fire("Error", "", "error");
+
+          }
+        })
+
+      } else if (result.isDenied) {
+
+        this.py.delete_payment(payment.flightId).subscribe({
+          next: (n) => {
+            this.stopUserTimer(this.auth.get_username())
+            Swal.fire("Cancelled", "", "info");
+          },
+          error: (e) => {
+            console.log(e)
+          }
+        })
+
+      }
+    });
+
+
   }
 }

@@ -10,7 +10,11 @@ services:
       context: ./frontend/flight_tickets
       dockerfile: Dockerfile
     container_name: frontend
+    networks:
+      my_net:
+        aliases:
+          - frontend
     ports:
-      - "8080:80"
+      - "4200:80"
     depends_on:
       - gateway_service

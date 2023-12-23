@@ -21,8 +21,8 @@ export interface UserMethods {
 type UserModel = Model<User, {}, UserMethods>;
 
 export enum ROLES {
-    ADMIN = "boss",
-    EMPLOYEE = "employee",
+    ADMIN = "admin",
+    CLIENT = "client",
 }
 
 const userSchema = new Schema<User, UserModel, UserMethods>({

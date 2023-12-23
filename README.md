@@ -2,11 +2,12 @@
 
 ## How to run 
 ```bash
-docker compose up --no-attach mongodb_users --no-attach mongodb_flight_tickets
+docker compose up -d
+```
+## init mongodb_flight_tickets DB
+```
+docker exec -i mongodb_flight_tickets bash
+./import.sh
 ```
 
-## How to run tests
-```
-docker compose run --rm --service-ports -d mongodb
-```
-![Documentation]()
+![Documentation](./documentation/FlightTickets.pdf)

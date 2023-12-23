@@ -14,36 +14,70 @@ colors.enable();
 const app = express();
 const users_service = 'http://users:3001';
 const flight_tickets_service = 'http://flights:3002';
-const payments_service = 'http://localhost:3003';
+const payments_service = 'http://payments:3003';
 
 const proxyA = createProxyMiddleware({
     target: users_service, changeOrigin: true,
     pathRewrite: {
         '^/api/users': '',
-    }, onProxyRes: (proxyRes, req: Request, res: Response) => {
-        console.log(`Request received for ${req.url} after path rewrite`);
+    }, onProxyReq: (proxyReq, req: Request, res) => {
+        if ((req.method == "POST" || req.method == "PUT") && req.body) {
+            let body = req.body;
+            let newBody = '';
+            try {
+                newBody = JSON.stringify(body);
+                proxyReq.setHeader('content-length', Buffer.byteLength(newBody, 'utf8'));
+                proxyReq.write(newBody);
+                proxyReq.end();
+            } catch (e) {
+                console.log('Stringify err', e)
+            }
+        }
     },
 });
 const proxyB = createProxyMiddleware({
     target: flight_tickets_service, changeOrigin: true,
     pathRewrite: {
         '^/api/flights': '',
-    }, onProxyRes: (proxyRes, req: Request, res: Response) => {
-        console.log(`Request received for ${req.url} after path rewrite`);
+    }, onProxyReq: (proxyReq, req: Request, res) => {
+        if ((req.method == "POST" || req.method == "PUT") && req.body) {
+            let body = req.body;
+            let newBody = '';
+            try {
+                newBody = JSON.stringify(body);
+                proxyReq.setHeader('content-length', Buffer.byteLength(newBody, 'utf8'));
+                proxyReq.write(newBody);
+                proxyReq.end();
+            } catch (e) {
+                console.log('Stringify err', e)
+            }
+        }
     },
 });
 const proxyC = createProxyMiddleware({
     target: payments_service, changeOrigin: true,
     pathRewrite: {
         '^/api/payments': '',
-    }, onProxyRes: (proxyRes, req: Request, res: Response) => {
-        console.log(`Request received for ${req.url} after path rewrite`);
-    },
+    }, onProxyReq: (proxyReq, req: Request, res) => {
+        if ((req.method == "POST" || req.method == "PUT") && req.body) {
+            let body = req.body;
+            let newBody = '';
+            try {
+                newBody = JSON.stringify(body);
+                proxyReq.setHeader('content-length', Buffer.byteLength(newBody, 'utf8'));
+                proxyReq.write(newBody);
+                proxyReq.end();
+            } catch (e) {
+                console.log('Stringify err', e)
+            }
+        }
+    }
 });
 
 app.use(express.json());
 const cors_option = {
-    origin: 'http://localhost:8080'
+    origin: 'http://localhost:4200',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
 }
 app.use(cors(cors_option));
 const secret = 'my_secret';
@@ -98,10 +132,6 @@ app.post('/register', (req, res) => {
 
 });
 
-app.use((req, res, next) => {
-    console.log(`Request received for ${req.url}`);
-    next();
-});
 
 app.use('/api/users', auth, proxyA);
 app.use('/api/flights', auth, proxyB);
