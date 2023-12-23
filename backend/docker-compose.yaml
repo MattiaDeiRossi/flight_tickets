@@ -3,6 +3,7 @@ version: '3.9'
 networks:
   my_net:
     name: my_net
+    external: true
 
 volumes:
   mongodbdata_users:
