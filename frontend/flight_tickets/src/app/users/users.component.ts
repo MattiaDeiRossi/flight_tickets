@@ -45,7 +45,7 @@ export class UsersComponent {
 
   onDelete(del_username: User) {
     Swal.fire({
-      title: "Do you really want to purchase delete user?",
+      title: "Do you really want to delete user?",
       showDenyButton: true,
       showCancelButton: false,
       confirmButtonText: "Confirm",
