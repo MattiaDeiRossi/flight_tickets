@@ -15,20 +15,6 @@ export class PaymentsService {
   }
 
 
-  get_payment(flightId: string): Observable<any> {
-    const options = {
-      headers: new HttpHeaders({
-        authorization: 'Bearer ' + this.auth.get_token(),
-        'cache-control': 'no-cache',
-        'Content-Type': 'application/json',
-      })
-    };
-    return this.http.get(this.url + '/payments/' + flightId, options).pipe(
-      tap((data) => {
-        return JSON.parse(JSON.stringify(data));
-      }));
-  }
-
   get_payments(): Observable<any> {
     const options = {
       headers: new HttpHeaders({

@@ -22,9 +22,13 @@ docker exec -i mongodb_flight_tickets bash
 ```
 4. Go to http://localhost:4200/ from your preferred browser
 
+## Software Architecture
+![Architecture](./documentation/Flight%20Tickets.png)
 
-## Software Architecture Schema
-[Architecture](./documentation/FlightTickets.pdf)
+## Documents
+- [Kata & Characteristics](./documentation/KataCharacteristics.pdf)
+- [Software Architecture]()
+- [APIs](./backend/apidoc/index.html)
 
 ## Features
 - [Create new Account](./documentation/features/Createanewadminaccount.pdf.pdf)

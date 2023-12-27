@@ -1,0 +1,13 @@
+{
+  "name": "Flight Tickets",
+  "version": "1.0.0",
+  "description": "Flight Tickets microservices API",
+  "title": "Flight Tickets APIs",
+  "order": [
+    "Gateway",
+    "Users",
+    "Flights",
+    "Payments"
+  ],
+  "forceLanguage": "en"
+}

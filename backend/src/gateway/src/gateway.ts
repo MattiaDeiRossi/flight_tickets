@@ -105,10 +105,40 @@ passport.use(new passportHTTP.BasicStrategy(
     })
 )
 
+/**
+ * @api {get} / get api version
+ * @apiName GetApiVersion
+ * @apiGroup Gateway
+ *
+ * @apiSuccess {String} api_version api version
+ * @apiSuccessExample Success-Response:
+ * HTTP/1.1 200 OK
+ * {
+ *   "api_version": "1.0"
+ * }
+ * @apiVersion 1.0.0
+ */
 app.get('/', (req, res) => {
     res.status(200).json({ api_gateway_version: "1.0" });
 });
 
+
+/**
+ * @api {get} /login login
+ * @apiName LoginUser
+ * @apiGroup Gateway
+ * 
+ * @apiHeader {String} user user who wants to login.
+ * @apiSuccess {json} tken_signed token signed with expired date
+ * @apiSuccessExample Sucess-Response:
+ * HTTP/1.1 200 OK
+ * {
+ *   "error": false,
+ *   "errormessage": "",
+ *   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImNhc2hpZXIiLCJpZCI6IjY0OTRjMGI0OTdkYzlmNmYzNDJhODdlMSIsImlhdCI6MTY4NzU1MDAzMCwiZXhwIjoxNjg3NTUzNjMwfQ.sH0K-iijI1DgdtZsgi2KYy2PfzDSi_AlKwk7P_MJGvg"
+ * }
+ * @apiVersion 1.0.0
+ */
 app.get('/login', passport.authenticate('basic', { session: false }), (req, res) => {
     console.log("Login granted".green, " Generating token...");
     let tokendata = {
@@ -120,6 +150,16 @@ app.get('/login', passport.authenticate('basic', { session: false }), (req, res)
     return res.status(200).json({ error: false, errormessage: "", token: token_signed });
 })
 
+/**
+ * @api {post} /register register
+ * @apiName AddUsers
+ * @apiGroup Gateway
+ *
+ * @apiBody {User} user new user to add
+ * 
+ * @apiSuccess {String} username username of new user added
+ * @apiVersion 1.0.0
+ */
 app.post('/register', (req, res) => {
     let u = new user(req.body);
     u.setPassword(req.body.password);
