@@ -36,4 +36,4 @@ docker exec -i mongodb_flight_tickets bash
 
 - [Purchase tickets](./documentation/features/BookingandManagingFlights.pdf.pdf)
 - [Multiple users](./documentation/features/MultipleUsers.pdf)
-- [Make a refund](./documentation/features/Makearefund.pdf.pdf)
+- [Make a refund](./documentation/features/Makearefund.pdf)
