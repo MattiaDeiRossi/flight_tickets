@@ -31,9 +31,9 @@ docker exec -i mongodb_flight_tickets bash
 - [APIs](./backend/apidoc/index.html)
 
 ## Features
-- [Create new Account](./documentation/features/Createanewadminaccount.pdf.pdf)
-- [Delete user](./documentation/features/DeleteaUser.pdf.pdf)
+- [Create new Account](./documentation/features/Createanewadminaccount.pdf)
+- [Delete user](./documentation/features/DeleteaUser.pdf)
 
-- [Purchase tickets](./documentation/features/BookingandManagingFlights.pdf.pdf)
+- [Purchase tickets](./documentation/features/BookingandManagingFlights.pdf)
 - [Multiple users](./documentation/features/MultipleUsers.pdf)
 - [Make a refund](./documentation/features/Makearefund.pdf)
