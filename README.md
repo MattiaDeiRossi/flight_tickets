@@ -27,7 +27,7 @@ docker exec -i mongodb_flight_tickets bash
 
 ## Documents
 - [Kata & Characteristics](./documentation/KataCharacteristics.pdf)
-- [Software Architecture]()
+- [Software Architecture](./documentation/SW.pdf)
 - [APIs](./backend/apidoc/index.html)
 
 ## Features
